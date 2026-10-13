@@ -1,0 +1,179 @@
+/* =========================================================
+   GLOBAL PAGE SETTINGS
+========================================================= */
+
+body {
+  background: linear-gradient(135deg, #1c1f26, #2a2f3a);
+  color: #e6e9ef;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.main-content {
+  margin-left: 280px; /* adjust if sidebar width differs */
+  padding: 2rem;
+  transition: margin-left 0.3s ease;
+}
+
+/* =========================================================
+   CONTAINER WRAPPER
+========================================================= */
+
+.edit-category-container {
+  background: rgba(40, 44, 55, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+  padding: 2rem 2.5rem;
+  max-width: 600px;
+  margin: 3rem auto;
+}
+
+/* =========================================================
+   HEADER SECTION
+========================================================= */
+
+.edit-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.edit-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.edit-header p {
+  color: #b0b4bd;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* =========================================================
+   FLASH MESSAGES
+========================================================= */
+
+.flashes {
+  margin-bottom: 1.5rem;
+}
+
+.alert {
+  border-radius: 10px;
+  background: rgba(30, 33, 42, 0.95);
+  color: #fff;
+  border: 1px solid #444;
+}
+
+/* =========================================================
+   FORM SECTION
+========================================================= */
+
+.edit-category-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --- Form Groups --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #e6e9ef;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  color: #fff;
+  transition: all 0.25s ease;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.3);
+  outline: none;
+}
+
+/* =========================================================
+   FORM ACTION BUTTONS
+========================================================= */
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* --- Button Base --- */
+.form-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  padding: 0.6rem 1.3rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+/* --- Primary Button --- */
+.btn-primary {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(13, 110, 253, 0.5);
+}
+
+/* --- Secondary Button --- */
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e6e9ef;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN
+========================================================= */
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .edit-category-container {
+    margin: 2rem 1rem;
+    padding: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'inventory/products/css/edit_product.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+{% endblock %}
+
+{% block content %}
+{% include 'menu.html' %}
+
+<div class="edit-panel">
+
+  <!-- LEFT: Product visual (image + QR + barcode) -->
+  <div class="product-card">
+    {% if product.image_url %}
+      <img src="{{ product.image_url }}" class="product-image" alt="Product Image">
+    {% else %}
+      <div class="placeholder">No image</div>
+    {% endif %}
+    <img src="/media/qrcodes/{{ qr_filename }}" class="qr-code" alt="QR Code">
+  </div>
+
+  <!-- RIGHT: Form -->
+  <div class="form-card">
+    <form class="product-form" action="{% url 'product_edit' product.barcode %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {% for field in form %}
+      <div class="form-row">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% include "field_errors.html" %}
+      </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Υποβολή</button>
+        <a href="{{ request.META.HTTP_REFERER|default:'/product/products/list' }}" class="btn btn-secondary">Πίσω</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

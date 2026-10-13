@@ -1,0 +1,91 @@
+/* Form container as a card */
+.container.p-4.mt-4.shadow.rounded.bg-white {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 40px 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container.p-4.mt-4.shadow.rounded.bg-white:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Form heading */
+.container.p-4 h4 {
+    font-weight: 700;
+    color: #222;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+}
+
+/* Labels with floating effect */
+.form-label.fw-semibold {
+    font-weight: 600;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Inputs with subtle shadow and hover effect */
+.form-control {
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
+}
+
+.form-control:focus {
+    border-color: #4e73df;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(78, 115, 223, 0.25);
+    outline: none;
+}
+
+/* File input style */
+input[type="file"].form-control {
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+/* Submit button modern gradient */
+.btn.btn-primary {
+    background: linear-gradient(90deg, #4e73df, #224abe);
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 10px 25px;
+    transition: all 0.3s ease;
+}
+
+.btn.btn-primary:hover {
+    background: linear-gradient(90deg, #224abe, #4e73df);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(34, 74, 190, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .container.p-4.mt-4.shadow.rounded.bg-white {
+        padding: 25px 20px;
+        margin: 25px 15px;
+    }
+}
+
+/* Optional: subtle input icon space (if you want to add icons) */
+.input-icon {
+    position: relative;
+}
+
+.input-icon input {
+    padding-left: 35px; /* leave space for icon */
+}

@@ -1,0 +1,107 @@
+/* Variables */
+:root {
+    --card-bg: #ffffff;
+    --card-shadow: rgba(0, 0, 0, 0.08);
+    --card-hover-shadow: rgba(0, 0, 0, 0.15);
+    --primary-color: #2563eb;
+    --secondary-color: #6b7280;
+    --border-radius: 12px;
+    --transition-speed: 0.3s;
+}
+
+/* Reset spacing for card text */
+.products-row .card-body p {
+    margin-bottom: 0.5rem;
+}
+
+/* Cards Grid */
+.row.g-4 {
+    margin-top: 1rem;
+}
+
+/* Card styling */
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 6px var(--card-shadow);
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px var(--card-hover-shadow);
+}
+
+/* Card title */
+.card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    min-height: 3rem; /* keep height consistent */
+}
+
+/* Card text */
+.card-text {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+}
+
+/* Links / buttons */
+.card a.btn {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    transition: all var(--transition-speed) ease;
+}
+
+.card a.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.card a.btn-outline-secondary:hover {
+    background-color: var(--secondary-color);
+    color: #fff;
+}
+
+/* Ensure buttons are spaced correctly at bottom */
+.card-body .d-flex.justify-content-between {
+    margin-top: auto;
+}
+
+/* Responsive images (if you add images later) */
+.card img {
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    max-height: 180px;
+    object-fit: cover;
+}
+
+/* Empty / no products message */
+.text-center h5.text-muted {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+    margin-top: 3rem;
+}
+
+/* Pagination overrides (optional, to match cards theme) */
+.pagination .page-item .page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    transition: all var(--transition-speed) ease;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}

@@ -1,0 +1,140 @@
+/* ===== Layout Container ===== */
+.edit-panel {
+    display: flex;
+    gap: 2.5rem;
+    max-width: 1100px;
+    margin: 3rem auto;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+/* ===== LEFT: Product Image + QR ===== */
+.product-card {
+    flex: 0 0 250px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.product-card img.product-image {
+    width: 180px;
+    height: auto;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.product-card img.qr-code {
+    width: 120px;
+    height: 120px;
+    margin-top: 1rem;
+    border-radius: 8px;
+}
+
+/* ===== RIGHT: Form ===== */
+.form-card {
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ===== Form Rows ===== */
+.form-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form-row label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.4rem;
+}
+
+/* Make inputs truly full width */
+.form-control {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #fafbfc;
+    box-sizing: border-box; /* ensures padding doesn't reduce width */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Input focus state */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    outline: none;
+    background: #fff;
+}
+
+/* ===== Buttons ===== */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 2rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    color: #fff;
+    border: none;
+    padding: 0.9rem 2.8rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 10px 24px rgba(13, 110, 253, 0.35);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(102, 16, 242, 0.45);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+    padding: 0.9rem 2.2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .edit-panel {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-card,
+    .form-card {
+        width: 100%;
+    }
+
+    .form-card {
+        padding: 2rem 1.5rem;
+    }
+}

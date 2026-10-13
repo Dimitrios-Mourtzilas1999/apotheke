@@ -1,0 +1,59 @@
+{% extends "base.html" %}{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/products/css/register_product.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+{% endblock %}
+
+{% block content %}
+{% include 'menu.html' %}
+
+<form action="{% url 'product_register' %}" method="POST" enctype="multipart/form-data"
+      class="container p-4 mt-4 shadow rounded bg-white">
+    {% csrf_token %}
+
+    <h4 class="mb-4 text-center">Register Product</h4>
+
+    <div class="mb-3">
+        <label for="{{ form.barcode.id_for_label }}" class="form-label fw-semibold">{{ form.barcode.label }}</label>
+        {{ form.barcode }}{% include "field_errors.html" with field=form.barcode %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.desc.id_for_label }}" class="form-label fw-semibold">{{ form.desc.label }}</label>
+        {{ form.desc }}{% include "field_errors.html" with field=form.desc %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.price.id_for_label }}" class="form-label fw-semibold">{{ form.price.label }}</label>
+            {{ form.price }}{% include "field_errors.html" with field=form.price %}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.stock.id_for_label }}" class="form-label fw-semibold">{{ form.stock.label }}</label>
+            {{ form.stock }}{% include "field_errors.html" with field=form.stock %}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.categories.id_for_label }}" class="form-label fw-semibold">{{ form.categories.label }}</label>
+        {{ form.categories }}{% include "field_errors.html" with field=form.categories %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.suppliers.id_for_label }}" class="form-label fw-semibold">{{ form.suppliers.label }}</label>
+        {{ form.suppliers }}{% include "field_errors.html" with field=form.suppliers %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.image.id_for_label }}" class="form-label fw-semibold">{{ form.image.label }}</label>
+        {{ form.image }}{% include "field_errors.html" with field=form.image %}
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary px-4 py-2">Καταχώρηση προϊόντος</button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'inventory/categories/css/edit_category.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+{% endblock %}
+
+{% block content %}
+{% include 'menu.html' %}
+
+<div class="main-content">
+  <div class="edit-category-container">
+
+    <!-- Header -->
+    <div class="edit-header">
+      <h2><i class="fa-solid fa-pen-to-square"></i> Ενημέρωση Κατηγορίας {{ category.cat_type }}</h2>
+    </div>
+
+    <!-- Edit Category Form -->
+    <form method="POST" action="{% url 'category_edit' category.id %}" class="edit-category-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="cat_type"><i class="fa-solid fa-tag"></i> Περιγραφή Κατηγορίας</label>
+        <input type="text" name="category_type" id="cat_type" class="form-control" maxlength="100"
+               placeholder="Enter category name" value="{{ form.category_type.value|default_if_none:'' }}" required>
+        {% include "field_errors.html" with field=form.category_type %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Ενημέρωση</button>
+        <a href="{% url 'category_list' %}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Πίσω</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

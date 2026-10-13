@@ -1,0 +1,49 @@
+{% extends "base.html" %}{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/login.css' %}">
+<link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="flashes container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<section class="login-section">
+
+    <!-- Left: Logo -->
+    <div class="login-logo">
+        <img src="{% static 'accounts/images/mg_solutions.jpg' %}" alt="Logo" class="logo">
+    </div>
+
+    <!-- Right: Form -->
+<div class="login-form">
+    <div class="card">
+        <form method="POST" action="{% url 'verify_otp' %}" class="login-form-inner">
+            {% csrf_token %}
+
+            <h2 class="form-title">Επαλήθευση OTP</h2>
+
+            <div class="form-group">
+                <label for="{{ form.otp.id_for_label }}" class="form-label">{{ form.otp.label }}</label>
+                {{ form.otp }}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-login">Επαλήθευση</button>
+            <a href="{% url 'forgot_password' %}" class="btn btn-secondary mt-2">Επιστροφή</a>
+        </form>
+    </div>
+</div>
+
+</section>
+
+{% endblock %}

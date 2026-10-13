@@ -1,0 +1,35 @@
+{% if not products %}
+  <div class="text-center mt-5">
+    <h5 class="text-muted">Δεν υπάρχουν προϊόντα.</h5>
+  </div>
+{% else %}
+<table class="table table-hover table-bordered align-middle products-table">
+  <thead class="table-light">
+    <tr>
+      <th><input type="checkbox" name="barcodes" class="checkbox" id="selectAll"></th>
+      <th>#</th>
+      <th scope="col" data-sort="barcode">Κωδικός <i class="fa-solid fa-sort"></i></th>
+      <th scope="col" data-sort="desc">Περιγραφή <i class="fa-solid fa-sort"></i></th>
+      <th scope="col" data-sort="category">Κατηγορία <i class="fa-solid fa-sort"></i></th>
+      <th scope="col" data-sort="supplier">Προμηθευτής <i class="fa-solid fa-sort"></i></th>
+      <th scope="col" data-sort="stock">Απόθεμα <i class="fa-solid fa-sort"></i></th>
+      <th scope="col" data-sort="price">Τιμή <i class="fa-solid fa-sort"></i></th>
+    </tr>
+  </thead>
+  <tbody id="productTableBody">
+    {% for product in products %}
+    <tr>
+      <td><input type="checkbox" name="barcode" value="{{ product.barcode }}" class="checkbox"></td>
+      <td>{{ forloop.counter|add:row_offset }}</td>
+      <td><a href="{% url 'product_edit' product.barcode %}">{{ product.barcode }}</a></td>
+      <td>{{ product.desc }}</td>
+      <td>{{ product.category.cat_type|default:'Χωρίς κατηγορία' }}</td>
+      <td>{{ product.supplier.name|default:'Χωρίς προμηθευτή' }}</td>
+      <td>{{ product.stock }}</td>
+      <td>{{ product.price|default:0|floatformat:"2u" }} €</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% include 'pagination.html' %}

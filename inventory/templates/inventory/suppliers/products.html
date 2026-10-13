@@ -1,0 +1,60 @@
+{% extends "base.html" %}{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/suppliers/css/supplier_products.css' %}">
+{% endblock %}
+
+{% block content %}
+{% include 'menu.html' %}
+
+<div class="main-content">
+  <div class="container-fluid">
+
+    <!-- Page header -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+      <h3 class="fw-bold">
+        <i class="fa-solid fa-industry me-2"></i>
+        Προϊόντα Προμηθευτή: <span class="text-primary">{{ supplier.name }}</span>
+      </h3>
+      <a href="{% url 'supplier_list' %}" class="btn btn-secondary btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Επιστροφή
+      </a>
+    </div>
+
+    {% if products %}
+    <div class="table-responsive mt-4">
+      <table class="table table-hover table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>#</th><th>Κωδικός Προϊόντος</th><th>Περιγραφή</th><th>Κατηγορία</th><th>Απόθεμα</th><th>Τιμή</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              <a href="{% url 'product_edit' product.barcode %}" class="text-decoration-none text-primary fw-semibold">
+                {{ product.barcode }}
+              </a>
+            </td>
+            <td>{{ product.desc }}</td>
+            <td>{{ product.category.cat_type|default:'Χωρίς κατηγορία' }}</td>
+            <td>{{ product.stock }}</td>
+            <td>{{ product.price|default:0|floatformat:"2u" }} €</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div class="text-center mt-5">
+        <h5 class="empty-state">Δεν υπάρχουν προϊόντα για τον προμηθευτή {{ supplier.name }}.</h5>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

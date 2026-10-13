@@ -1,0 +1,37 @@
+{% if products %}
+<div class="row g-4">
+  {% for product in products %}
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ product.desc }}</h5>
+        <p class="card-text mb-1"><strong>Barcode:</strong> {{ product.barcode }}</p>
+        <p class="card-text mb-1">
+          <strong>Κατηγορία:</strong>
+          {{ product.category.cat_type|default:'Χωρίς Κατηγορία' }}
+        </p>
+        <p class="card-text mb-2">
+          <strong>Stock:</strong> {{ product.stock }} |
+          <strong>Price:</strong> {{ product.price|default:0|floatformat:"2u" }} €
+        </p>
+        <div class="mt-auto d-flex justify-content-between">
+          <a href="{% url 'product_edit' product.barcode %}" class="btn btn-sm btn-outline-primary">
+            <i class="fa-solid fa-pen"></i> Επεξεργασία
+          </a>
+          {% if product.category_id %}
+          <a href="{% url 'category_info' product.category_id %}" class="btn btn-sm btn-outline-secondary">
+            <i class="fa-solid fa-eye"></i> Κατηγορία
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% include 'pagination.html' %}
+{% else %}
+<div class="text-center mt-5">
+  <h5 class="text-muted">Δεν υπάρχουν προϊόντα.</h5>
+</div>
+{% endif %}

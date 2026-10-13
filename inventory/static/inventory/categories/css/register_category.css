@@ -1,0 +1,72 @@
+/* ======= General Form Styling ======= */
+form {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ======= Form Labels ======= */
+form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333333;
+    font-size: 1rem;
+}
+
+/* ======= Inputs and Select ======= */
+form input[type="text"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+form input[type="text"]:focus,
+form select:focus,
+form textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    outline: none;
+}
+
+/* ======= Submit Button ======= */
+form button[type="submit"] {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+form button[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* ======= Responsive Adjustments ======= */
+@media (max-width: 576px) {
+    form {
+        padding: 20px 25px;
+        margin: 20px;
+    }
+}
+
+/* ======= Optional: Add Font Awesome Icon inside Submit ======= */
+form button[type="submit"] i {
+    margin-left: 8px;
+}

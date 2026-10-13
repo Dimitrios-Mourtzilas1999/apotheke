@@ -1,0 +1,48 @@
+{# Sidebar fragment. In Flask this file `extends base.html` and was {% include %}d, which nested a full page. #}
+{% with current=request.resolver_match.url_name %}
+<nav id="sidebarMenu" class="sidebar">
+  <div>
+    <div class="sidebar__header">
+      <i class="fa-solid fa-store me-2"></i> Inventory
+    </div>
+
+    <ul class="sidebar__actions">
+      <li>
+        <a href="{% url 'dashboard' %}" class="sidebar__btn {% if current == 'dashboard' %}active{% endif %}">
+          <i class="fa fa-home"></i> Αρχική
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'category_list' %}" class="sidebar__btn {% if 'category' in current %}active{% endif %}">
+          <i class="fa fa-list"></i> Κατηγορίες
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'supplier_list' %}" class="sidebar__btn {% if 'supplier' in current %}active{% endif %}">
+          <i class="fa fa-truck"></i> Προμηθευτές
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'product_list' 'list' %}" class="sidebar__btn {% if 'product' in current %}active{% endif %}">
+          <i class="fa fa-box"></i> Προϊόντα
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="user-info text-center">
+    <div><i class="fa fa-user"></i> {{ user.username }}</div>
+    <a class="sign-out-btn" href="{% url 'reset_password' %}">
+      <i class="fa fa-key"></i>
+      <span class="sign-out-label">Αλλαγή κωδικού</span>
+    </a>
+    <form method="post" action="{% url 'logout' %}" class="logout-form">
+      {% csrf_token %}
+      <button type="submit" class="sign-out-btn">
+        <i class="fa fa-sign-out"></i>
+        <span class="sign-out-label">Αποσύνδεση</span>
+      </button>
+    </form>
+  </div>
+</nav>
+{% endwith %}

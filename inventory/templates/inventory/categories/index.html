@@ -1,0 +1,67 @@
+{% extends "base.html" %}{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/categories/css/categories_index.css' %}">
+{% endblock %}
+
+{% block content %}
+{% include 'menu.html' %}
+
+<div class="main-content">
+  <div class="container-fluid">
+
+    {% if categories %}
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+      <h3 class="fw-bold"><i class="fa-solid fa-list"></i> Κατηγορίες</h3>
+      <div class="d-flex gap-2">
+        <a href="{% url 'category_register' %}" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-plus"></i> Νέα Κατηγορία
+        </a>
+      </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="row g-3">
+      {% for cat in categories %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card category-card h-100 shadow-sm">
+          <div class="card-body text-center d-flex flex-column justify-content-between">
+            <div>
+              <i class="fa-solid fa-boxes-stacked category-icon mb-3"></i>
+              <h5 class="category-title mb-2">{{ cat.cat_type }}</h5>
+              <p class="text-muted mb-3 product-count">
+                <i class="fa-solid fa-cubes me-1"></i>
+                <span class="fw-bold">{{ cat.product_count }}</span> προϊόντα
+              </p>
+            </div>
+            <div class="d-flex justify-content-center gap-2">
+              <a href="{% url 'category_info' cat.id %}" class="btn btn-outline-primary btn-sm">
+                <i class="fa-solid fa-eye"></i> Προβολή
+              </a>
+              {# Deleting is a state change: POST + CSRF (it was a GET link in Flask) #}
+              <form method="post" action="{% url 'category_delete' %}" class="d-inline"
+                    onsubmit="return confirm('Διαγραφή κατηγορίας;');">
+                {% csrf_token %}
+                <input type="hidden" name="cat_id" value="{{ cat.id }}">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                  <i class="fa-solid fa-trash"></i> Διαγραφή
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center mt-5">
+      <h5 class="text-muted">Δεν υπάρχουν διαθέσιμες κατηγορίες.</h5>
+      <a href="{% url 'category_register' %}" class="btn btn-primary btn-sm mt-2">Νέα Κατηγορία</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

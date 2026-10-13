@@ -1,0 +1,79 @@
+/* ===== Dashboard Summary Cards ===== */
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(40, 44, 55, 0.95);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.8rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.card-info h5 {
+  font-size: 0.95rem;
+  margin: 0;
+  color: #bfc3ce;
+}
+
+.card-info p {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+}
+
+/* Layout Adjustments */
+.main-content {
+  margin-left: 280px;
+  padding: 2rem;
+}
+
+@media (max-width: 992px) {
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}
+
+
+/* ===== Chart Cards ===== */
+.chart-card {
+  background: rgba(40, 44, 55, 0.95);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.chart-card h5 {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+canvas {
+  max-height: 320px;
+}
+
+/* Reuse your existing summary-card styles from before */

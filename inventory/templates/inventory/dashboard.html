@@ -1,0 +1,74 @@
+{% extends "base.html" %}{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+{% endblock %}
+
+{% block js %}
+{{ category_data|json_script:"category-data" }}
+{{ supplier_data|json_script:"supplier-data" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  window.categoryData = JSON.parse(document.getElementById("category-data").textContent);
+  window.supplierData = JSON.parse(document.getElementById("supplier-data").textContent);
+</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{% include 'menu.html' %}
+
+<div class="main-content">
+
+  <!-- ===== Summary Cards ===== -->
+  <div class="container-fluid mt-4">
+    <div class="row g-3">
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="summary-card">
+          <div class="card-icon bg-primary"><i class="fa-solid fa-box"></i></div>
+          <div class="card-info"><h5>Προϊόντα</h5><p>{{ total_products }}</p></div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="summary-card">
+          <div class="card-icon bg-success"><i class="fa-solid fa-layer-group"></i></div>
+          <div class="card-info"><h5>Κατηγορίες</h5><p>{{ total_categories }}</p></div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="summary-card">
+          <div class="card-icon bg-warning"><i class="fa-solid fa-truck"></i></div>
+          <div class="card-info"><h5>Προμηθευτές</h5><p>{{ total_suppliers }}</p></div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="summary-card">
+          <div class="card-icon bg-info"><i class="fa-solid fa-euro-sign"></i></div>
+          <div class="card-info"><h5>Αξία Αποθέματος</h5><p>{{ total_stock_value }} €</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Charts Section ===== -->
+  <div class="container-fluid mt-5">
+    <div class="row g-4">
+      <div class="col-12 col-lg-6">
+        <div class="chart-card">
+          <h5><i class="fa-solid fa-chart-pie me-2"></i> Κατανομή Προϊόντων ανά Κατηγορία</h5>
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="chart-card">
+          <h5><i class="fa-solid fa-chart-pie me-2"></i> Κατανομή Προϊόντων ανά Προμηθευτή</h5>
+          <canvas id="supplierChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

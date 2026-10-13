@@ -1,0 +1,42 @@
+#flash-container {
+  position: fixed;
+  bottom: 1rem;
+  left: calc(280px + 2rem); /* sidebar width + spacing */
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.flash-message {
+  pointer-events: auto;
+}
+
+
+.main-content {
+  margin-left: 280px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+  }
+
+  #flash-container {
+    left: 1rem;
+    right: 1rem;
+  }
+}

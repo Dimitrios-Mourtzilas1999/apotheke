@@ -1,0 +1,290 @@
+/* ===== Page Background ===== */
+body {
+    background: linear-gradient(135deg, #1c1f26, #2a2f3a);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===== Login Section Layout ===== */
+.login-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    width: 90%;
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* ===== Left Logo Panel ===== */
+.login-logo {
+    flex: 1;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.login-logo .logo {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease;
+}
+
+.login-logo .logo:hover {
+    transform: scale(1.05);
+}
+
+/* ===== Right Form Panel ===== */
+.login-form {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    padding: 3rem 2rem;
+}
+
+/* Card inside Form */
+.login-form .card {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+    position: relative;
+    animation: slideFadeIn 0.7s ease-out;
+}
+
+/* ===== Form Title ===== */
+.form-title {
+    text-align: center;
+    color: #ffffff;
+    font-size: 1.8rem;
+    margin-bottom: 1.8rem;
+    letter-spacing: 1px;
+}
+
+/* ===== Form Fields ===== */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    color: #e6e9ef;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Inputs */
+.form-control {
+    width: 91%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    border: 1px solid #ced4da;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
+    color: #ffffff;
+}
+
+/* ===== Buttons ===== */
+.btn-login {
+    width: 100%;
+    padding: 0.75rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    border: none;
+    color: #fff;
+    margin-top: 1rem;
+    transition: all 0.35s ease;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(13, 110, 253, 0.45);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.35);
+}
+
+/* ===== Links ===== */
+.form-links {
+    text-align: center;
+    margin-top: 1.2rem;
+}
+
+.forgot-password {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.25s ease;
+}
+
+.forgot-password:hover {
+    color: #0d6efd;
+}
+
+/* ===== Flashes ===== */
+.flashes {
+    position: absolute;
+    top: 1rem;
+    width: 90%;
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99;
+}
+
+/* ===== Animations ===== */
+@keyframes slideFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .login-section {
+        flex-direction: column;
+    }
+
+    .login-logo {
+        padding: 1.5rem;
+    }
+
+    .login-form {
+        padding: 2rem 1.5rem;
+    }
+}
+
+
+/* ===== Flashed Messages Container ===== */
+.flashes {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 350px;
+}
+
+/* ===== Individual Alert Boxes ===== */
+.flashes .alert {
+    position: relative;
+    padding: 0.75rem 1.2rem;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    animation: slideIn 0.5s ease-out;
+    overflow: hidden;
+    border: none;
+}
+
+/* Gradient backgrounds for categories */
+.alert-success {
+    background: linear-gradient(135deg, #28a745, #198754);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #1c1f26;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #0dcaf0, #31d2f2);
+    color: #1c1f26;
+}
+
+/* Close button */
+.alert .btn-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    opacity: 0.8;
+    transition: all 0.25s ease;
+}
+
+.alert .btn-close:hover {
+    opacity: 1;
+    background: rgba(255,255,255,0.35);
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+        height: auto;
+        margin: 12px 0 0 0;
+        padding: 0.75rem 1.2rem;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(20px);
+        height: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* Add this class dynamically to trigger fade-out */
+.alert.fade-out {
+    animation: fadeOut 0.5s forwards;
+}

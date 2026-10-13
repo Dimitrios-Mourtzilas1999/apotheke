@@ -1,0 +1,101 @@
+/* ===== Form Container ===== */
+form.container {
+    background: rgba(28, 31, 38, 0.95); /* dark card style */
+    color: #e6e9ef;
+    padding: 2rem;
+    border-radius: 20px;
+    max-width: 700px;
+    margin: 2rem auto;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+}
+
+/* ===== Form Heading ===== */
+form h4 {
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 1.5rem;
+}
+
+/* ===== Labels ===== */
+.form-label.fw-semibold {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #e6e9ef;
+}
+
+/* ===== Form Inputs ===== */
+.form-control {
+    width: 95%;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #555;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+}
+
+/* ===== Submit Button ===== */
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 14px;
+    padding: 0.75rem 2rem;
+    transition: all 0.35s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(13, 110, 253, 0.45);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.35);
+}
+
+/* ===== Row Styling ===== */
+.row .col-md-6 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+/* ===== File Input ===== */
+.form-control[type="file"] {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #555;
+    color: #fff;
+}
+
+/* ===== Text Center ===== */
+.text-center {
+    text-align: center;
+}
+
+/* ===== Responsive ===== */
+@media(max-width: 768px) {
+    .row .col-md-6 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    form.container {
+        padding: 1.5rem;
+        margin: 1.5rem;
+    }
+}
