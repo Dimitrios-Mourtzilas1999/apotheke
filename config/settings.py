@@ -64,7 +64,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "NAME": os.environ.get("DB_NAME", "apotheke"),
+            "NAME": os.environ.get("DB_NAME", "inventory"),
             "USER": os.environ.get("DB_USERNAME", "root"),
             "PASSWORD": os.environ.get("DB_PASSWORD", "root"),
             "HOST": os.environ.get("DB_HOST", "localhost"),

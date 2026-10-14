@@ -1,20 +1,35 @@
 services:
   db:
     image: mysql:8.0
-    container_name: apotheke_db
+    container_name: inventory_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: apotheke
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      MYSQL_DATABASE: ${DB_NAME:?DB_NAME is required}
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  web:
+    build: .
+    container_name: inventory_web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+    ports:
+      - "8001:8001"
 
 volumes:
   mysql_data:
