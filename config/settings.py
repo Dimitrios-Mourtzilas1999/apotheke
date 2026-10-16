@@ -89,9 +89,6 @@ USE_TZ = False  # the Flask app stored naive local datetimes
 STATIC_URL = env.str("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = env.str("STATIC_ROOT", default=str(BASE_DIR / "staticfiles"))
-STATICFILES_STORAGE = "whitenoise.storage.ManifestStaticFilesStorage"
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_AUTOREFRESH = DEBUG
 
 MEDIA_URL = env.str("MEDIA_URL", default="/media/")
 MEDIA_ROOT = env.str("MEDIA_ROOT", default=str(BASE_DIR / "media"))  # replaces static/uploads
