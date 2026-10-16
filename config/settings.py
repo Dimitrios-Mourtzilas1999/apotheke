@@ -1,21 +1,27 @@
-import os
 from pathlib import Path
 
 from django.contrib.messages import constants as message_constants
+import environ
 
 import pymysql
-from dotenv import load_dotenv
 
 pymysql.version_info = (2, 2, 1, "final", 0)  # satisfy Django's mysqlclient version check
 pymysql.install_as_MySQLdb()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+
+# Load environment variables from .env file
+environ.Env.read_env(BASE_DIR / ".env")
+
+# Create env object with casting
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 
 # NOTE: the Flask _env file had a typo (SECRET_KET); both are accepted here.
-SECRET_KEY = os.environ.get("SECRET_KEY") or os.environ.get("SECRET_KET") or "dev-only-insecure-key"
-DEBUG = os.environ.get("DEBUG", "1") == "1"
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+SECRET_KEY = env("SECRET_KEY", default="dev-only-insecure-key") or env("SECRET_KET", default="dev-only-insecure-key")
+DEBUG = env.bool("DEBUG", default=False)
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -58,20 +64,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-if os.environ.get("DB_ENGINE", "mysql") == "sqlite":
-    DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.mysql",
-            "NAME": os.environ.get("DB_NAME", "inventory"),
-            "USER": os.environ.get("DB_USERNAME", "root"),
-            "PASSWORD": os.environ.get("DB_PASSWORD", "root"),
-            "HOST": os.environ.get("DB_HOST", "localhost"),
-            "PORT": os.environ.get("DB_PORT", "3306"),
-            "OPTIONS": {"charset": "utf8mb4"},
-        }
-    }
+DATABASES = {
+    "default": env.db(default="sqlite:///" + str(BASE_DIR / "db.sqlite3")),
+}
 
 AUTH_USER_MODEL = "accounts.User"
 AUTHENTICATION_BACKENDS = ["accounts.backends.LegacyPasswordBackend"]
@@ -91,11 +86,15 @@ TIME_ZONE = "Europe/Athens"
 USE_I18N = True
 USE_TZ = False  # the Flask app stored naive local datetimes
 
-STATIC_URL = "/static/"
+STATIC_URL = env.str("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"  # replaces static/uploads
+STATIC_ROOT = env.str("STATIC_ROOT", default=str(BASE_DIR / "staticfiles"))
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = DEBUG
+
+MEDIA_URL = env.str("MEDIA_URL", default="/media/")
+MEDIA_ROOT = env.str("MEDIA_ROOT", default=str(BASE_DIR / "media"))  # replaces static/uploads
 
 # Session configuration
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
@@ -109,10 +108,21 @@ UPLOAD_MAX_BYTES = 16 * 1024 * 1024  # was MAX_CONTENT_LENGTH
 
 # Email configuration for password reset
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_HOST = env.str("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
 EMAIL_TIMEOUT = 30
+
+# Required when running behind Appliku's reverse proxy
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Logging configuration for Appliku
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "loggers": {"": {"handlers": ["console"], "level": env.str("LOG_LEVEL", default="INFO")}},
+}
