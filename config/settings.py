@@ -65,7 +65,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
-    "default": env.db(default="sqlite:///" + str(BASE_DIR / "db.sqlite3")),
+    "default": env.db(),
 }
 
 AUTH_USER_MODEL = "accounts.User"
