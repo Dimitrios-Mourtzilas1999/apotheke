@@ -18,11 +18,11 @@ build_settings:
 
 services:
   web:
-    command: "gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4 --threads 2 --timeout 120"
+    command: "mkdir -p /app/media/qrcodes && chmod -R 777 /app/media && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4 --threads 2 --timeout 120"
     scale: 1
 
   release:
-    command: "mkdir -p /app/media/qrcodes && chmod -R 777 /app/media && python manage.py collectstatic --noinput --clear && python manage.py migrate --fake-initial --noinput"
+    command: "python manage.py collectstatic --noinput --clear && python manage.py migrate --fake-initial --noinput"
 
 databases:
   db:
