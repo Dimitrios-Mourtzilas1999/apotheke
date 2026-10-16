@@ -24,7 +24,7 @@ services:
     scale: 1
 
   release:
-    command: "python manage.py migrate --fake-initial --noinput"
+    command: "python -c \"import os; print('DATABASE_URL:', os.environ.get('DATABASE_URL', 'NOT SET'))\" && python manage.py migrate --fake-initial --noinput"
 
 databases:
   db:
