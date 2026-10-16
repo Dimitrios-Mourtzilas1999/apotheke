@@ -22,7 +22,7 @@ services:
     scale: 1
 
   release:
-    command: "python -c \"import os; print('DATABASE_URL:', os.environ.get('DATABASE_URL', 'NOT SET')); print('All env vars:', dict((k, v) for k, v in os.environ.items() if 'DB' in k or 'DATABASE' in k))\" && python manage.py collectstatic --noinput --clear && python manage.py migrate --fake-initial --noinput"
+    command: "mkdir -p /app/media/qrcodes && chmod -R 777 /app/media && python manage.py collectstatic --noinput --clear && python manage.py migrate --fake-initial --noinput"
 
 databases:
   db:
