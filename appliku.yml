@@ -15,6 +15,8 @@ build_settings:
       source: manual
     - name: LOG_LEVEL
       value: "INFO"
+    - name: MEDIA_ROOT
+      value: "/app/media"
 
 services:
   web:
