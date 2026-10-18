@@ -45,6 +45,7 @@
   font-family: "Inter", "Segoe UI", sans-serif;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(255,255,255,0.08);
+  table-layout: auto;
 }
 
 /* ====== TABLE HEADER ====== */
@@ -144,6 +145,11 @@
   .view-controls .btn {
     width: 100%;
     justify-content: center;
+  }
+
+  #dynamicContent {
+    width: 100%;
+    overflow-x: hidden;
   }
 
   .products-table-wrapper {
@@ -246,6 +252,11 @@
   .stock-badge {
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
+  }
+
+  /* Fix table container on mobile */
+  .products-table-wrapper .table {
+    margin-bottom: 0;
   }
 }
 
@@ -351,4 +362,9 @@
   border-radius: 12px;
   padding: 1rem;
   border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ===== Dynamic Content ====== */
+#dynamicContent {
+  width: 100%;
 }
