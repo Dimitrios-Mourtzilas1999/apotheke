@@ -1,7 +1,7 @@
 #flash-container {
   position: fixed;
   bottom: 1rem;
-  left: calc(280px + 2rem); /* sidebar width + spacing */
+  left: calc(240px + 2rem); /* sidebar width + spacing */
   right: 1rem;
   z-index: 9999;
   display: flex;
@@ -16,7 +16,9 @@
 
 
 .main-content {
-  margin-left: 280px;
+  margin-left: 240px; /* Match sidebar width */
+  width: calc(100% - 240px);
+  box-sizing: border-box;
 }
 
 @keyframes slideDown {
@@ -33,6 +35,7 @@
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;
+    width: 100%;
   }
 
   #flash-container {

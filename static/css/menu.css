@@ -111,11 +111,19 @@
     margin-left: auto;
     padding-left: 1rem;
   }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 .main-content {
     margin-left: 240px; /* same as sidebar width */
     padding: 1rem;
+    min-height: 100vh;
+    width: calc(100% - 240px);
+    box-sizing: border-box;
 }
 /* logout is a POST form button in Django (was a GET link in Flask) */
 button.sign-out-btn { background: none; border: 0; width: 100%; font: inherit; cursor: pointer; }
