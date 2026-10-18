@@ -4,11 +4,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 <link rel="stylesheet" href="{% static 'inventory/products/css/products.css' %}">
-{% if current_view == 'list' %}
 <link rel="stylesheet" href="{% static 'inventory/products/css/product_list.css' %}">
-{% else %}
 <link rel="stylesheet" href="{% static 'inventory/products/css/product_cards.css' %}">
-{% endif %}
 {% endblock %}
 
 {% block js %}
@@ -50,11 +47,19 @@
 
     <!-- Dynamic content: plain fragments now (the Flask snippets extended other templates) -->
     <div id="dynamicContent">
-      {% if current_view == 'list' %}
-        {% include 'inventory/products/_list.html' %}
-      {% else %}
+      <!-- Mobile: Always show cards -->
+      <div class="d-md-none">
         {% include 'inventory/products/_cards.html' %}
-      {% endif %}
+      </div>
+      
+      <!-- Desktop: Show selected view -->
+      <div class="d-none d-md-block">
+        {% if current_view == 'list' %}
+          {% include 'inventory/products/_list.html' %}
+        {% else %}
+          {% include 'inventory/products/_cards.html' %}
+        {% endif %}
+      </div>
     </div>
 
   </div>
