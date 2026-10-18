@@ -6,6 +6,10 @@
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 {% endblock %}
 
+{% block js %}
+<script src="{% static 'inventory/products/js/copy_barcode.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 {% include 'menu.html' %}
 
@@ -13,16 +17,77 @@
 
   <!-- LEFT: Product visual (image + QR + barcode) -->
   <div class="product-card">
+    <div class="product-header">
+      <h3>Πληροφορίες Προϊόντος</h3>
+    </div>
+
     {% if product.image_url %}
-      <img src="{{ product.image_url }}" class="product-image" alt="Product Image">
+      <img src="{{ product.image_url }}" class="product-image" alt="{{ product.desc }}">
     {% else %}
-      <div class="placeholder">No image</div>
+      <div class="placeholder-image">
+        <i class="fa-solid fa-image"></i>
+        <span>Χωρίς εικόνα</span>
+      </div>
     {% endif %}
-    <img src="/media/qrcodes/{{ qr_filename }}" class="qr-code" alt="QR Code">
+
+    <div class="product-details">
+      <div class="detail-item">
+        <span class="detail-label">Κωδικός:</span>
+        <div class="barcode-display">
+          <code class="barcode-text">{{ product.barcode }}</code>
+          <button class="btn-copy-barcode" data-barcode="{{ product.barcode }}" title="Αντιγραφή">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Περιγραφή:</span>
+        <span class="detail-value">{{ product.desc|default:'-' }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Κατάσταση Αποθέματος:</span>
+        <span class="badge stock-badge stock-{{ product.stock_status }}">{{ product.stock_status_label }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Απόθεμα:</span>
+        <span class="detail-value">{{ product.stock }} τεμ.</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Τιμή:</span>
+        <span class="detail-value price">{{ product.price|default:0|floatformat:"2u" }} €</span>
+      </div>
+
+      {% if product.category %}
+      <div class="detail-item">
+        <span class="detail-label">Κατηγορία:</span>
+        <span class="detail-value">{{ product.category.cat_type }}</span>
+      </div>
+      {% endif %}
+
+      {% if product.supplier %}
+      <div class="detail-item">
+        <span class="detail-label">Προμηθευτής:</span>
+        <span class="detail-value">{{ product.supplier.name }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="qr-section">
+      <h4>QR Code</h4>
+      <img src="/media/qrcodes/{{ qr_filename }}" class="qr-code" alt="QR Code for {{ product.barcode }}">
+      <p class="qr-label">Σαρώστε για κωδικό</p>
+    </div>
   </div>
 
   <!-- RIGHT: Form -->
   <div class="form-card">
+    <div class="form-header">
+      <h3>Επεξεργασία Προϊόντος</h3>
+    </div>
     <form class="product-form" action="{% url 'product_edit' product.barcode %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
@@ -35,8 +100,12 @@
       {% endfor %}
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Υποβολή</button>
-        <a href="{{ request.META.HTTP_REFERER|default:'/product/products/list' }}" class="btn btn-secondary">Πίσω</a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-save"></i> Υποβολή
+        </button>
+        <a href="{{ request.META.HTTP_REFERER|default:'/product/products/list' }}" class="btn btn-secondary">
+          <i class="fa-solid fa-arrow-left"></i> Πίσω
+        </a>
       </div>
     </form>
   </div>
