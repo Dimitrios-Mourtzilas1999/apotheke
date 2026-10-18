@@ -1,72 +1,128 @@
-/* ======= General Form Styling ======= */
-form {
+/* ===== Form Container ===== */
+.category-register-form {
+    background: rgba(28, 31, 38, 0.98);
+    color: #e6e9ef;
+    padding: 2.5rem;
+    border-radius: 20px;
     max-width: 500px;
-    margin: 50px auto;
-    padding: 30px 40px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 2rem auto;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.45);
 }
 
-/* ======= Form Labels ======= */
-form label {
+/* ===== Form Heading ===== */
+.form-title {
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+/* ===== Form Labels ===== */
+.form-label {
     display: block;
     font-weight: 600;
-    margin-bottom: 8px;
-    color: #333333;
-    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    font-size: 0.95rem;
 }
 
-/* ======= Inputs and Select ======= */
-form input[type="text"],
-form select,
-form textarea {
+/* ===== Form Groups ===== */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* ===== Inputs and Select ===== */
+.form-control {
     width: 100%;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.5rem;
+    border: 2px solid #4a5568;
+    border-radius: 12px;
     font-size: 1rem;
     transition: border-color 0.3s, box-shadow 0.3s;
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
 }
 
-form input[type="text"]:focus,
-form select:focus,
-form textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+.form-control::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
     outline: none;
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
 }
 
-/* ======= Submit Button ======= */
-form button[type="submit"] {
-    display: inline-block;
-    background-color: #007bff;
+.form-control option {
+    background: #1c1f26;
+    color: #ffffff;
+}
+
+/* ===== Form Actions ===== */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 2rem;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
     color: #fff;
-    font-weight: 600;
-    padding: 10px 25px;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    padding: 0.9rem 2.8rem;
+    border-radius: 12px;
+    font-weight: 600;
     font-size: 1rem;
-    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 10px 24px rgba(13, 110, 253, 0.35);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-form button[type="submit"]:hover {
-    background-color: #0056b3;
+.btn-primary:hover {
     transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(102, 16, 242, 0.45);
 }
 
-/* ======= Responsive Adjustments ======= */
-@media (max-width: 576px) {
-    form {
-        padding: 20px 25px;
-        margin: 20px;
+.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+    padding: 0.9rem 2.2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+    .category-register-form {
+        padding: 1.5rem;
+        margin: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
     }
 }
 
-/* ======= Optional: Add Font Awesome Icon inside Submit ======= */
-form button[type="submit"] i {
-    margin-left: 8px;
-}

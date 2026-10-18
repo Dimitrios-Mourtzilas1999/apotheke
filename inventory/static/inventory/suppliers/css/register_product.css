@@ -1,91 +1,126 @@
-/* Form container as a card */
-.container.p-4.mt-4.shadow.rounded.bg-white {
+/* ===== Form Container ===== */
+.supplier-register-form {
+    background: rgba(28, 31, 38, 0.98);
+    color: #e6e9ef;
+    padding: 2.5rem;
+    border-radius: 20px;
     max-width: 600px;
-    margin: 50px auto;
-    padding: 40px 30px;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 2rem auto;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.45);
 }
 
-.container.p-4.mt-4.shadow.rounded.bg-white:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* Form heading */
-.container.p-4 h4 {
+/* ===== Form Heading ===== */
+.form-title {
     font-weight: 700;
-    color: #222;
+    color: #0d6efd;
+    margin-bottom: 2rem;
     text-align: center;
-    margin-bottom: 30px;
-    letter-spacing: 0.5px;
+    font-size: 1.5rem;
 }
 
-/* Labels with floating effect */
+/* ===== Labels ===== */
 .form-label.fw-semibold {
-    font-weight: 600;
-    color: #555;
     display: block;
-    margin-bottom: 5px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+/* ===== Form Groups ===== */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* ===== Form Inputs ===== */
+.form-control {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 2px solid #4a5568;
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
+    font-size: 1rem;
     transition: all 0.3s ease;
 }
 
-/* Inputs with subtle shadow and hover effect */
-.form-control {
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    padding: 12px 16px;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-    background-color: #f9f9f9;
+.form-control::placeholder {
+    color: rgba(255,255,255,0.5);
 }
 
 .form-control:focus {
-    border-color: #4e73df;
-    background-color: #fff;
-    box-shadow: 0 0 8px rgba(78, 115, 223, 0.25);
     outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
 }
 
-/* File input style */
-input[type="file"].form-control {
-    padding: 6px 10px;
-    cursor: pointer;
+.form-control option {
+    background: #1c1f26;
+    color: #ffffff;
 }
 
-/* Submit button modern gradient */
-.btn.btn-primary {
-    background: linear-gradient(90deg, #4e73df, #224abe);
+/* ===== Form Actions ===== */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 2rem;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    color: #fff;
     border: none;
+    padding: 0.9rem 2.8rem;
     border-radius: 12px;
     font-weight: 600;
     font-size: 1rem;
-    padding: 10px 25px;
+    box-shadow: 0 10px 24px rgba(13, 110, 253, 0.35);
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.btn.btn-primary:hover {
-    background: linear-gradient(90deg, #224abe, #4e73df);
+.btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(34, 74, 190, 0.4);
+    box-shadow: 0 16px 40px rgba(102, 16, 242, 0.45);
 }
 
-/* Responsive adjustments */
-@media (max-width: 576px) {
-    .container.p-4.mt-4.shadow.rounded.bg-white {
-        padding: 25px 20px;
-        margin: 25px 15px;
+.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+    padding: 0.9rem 2.2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .supplier-register-form {
+        padding: 1.5rem;
+        margin: 1.5rem;
     }
-}
 
-/* Optional: subtle input icon space (if you want to add icons) */
-.input-icon {
-    position: relative;
-}
+    .form-actions {
+        flex-direction: column;
+    }
 
-.input-icon input {
-    padding-left: 35px; /* leave space for icon */
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
 }

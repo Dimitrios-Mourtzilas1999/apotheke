@@ -1,7 +1,6 @@
 {% extends "base.html" %}{% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 <link rel="stylesheet" href="{% static 'inventory/suppliers/css/register_product.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
@@ -11,23 +10,27 @@
 {% include 'menu.html' %}
 
 <div class="main-content">
-  <form action="{% url 'supplier_register' %}" method="POST" class="container p-4 mt-4 shadow rounded bg-white">
+  <form action="{% url 'supplier_register' %}" method="POST" class="supplier-register-form">
     {% csrf_token %}
 
-    <h4 class="mb-4 text-center">Register Supplier</h4>
+    <h4 class="form-title">Καταχώρηση Προμηθευτή</h4>
 
     {% for error in form.non_field_errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
     {% for field in form %}
-    <div class="mb-3">
+    <div class="form-group">
         <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
         {{ field }}
         {% include "field_errors.html" %}
     </div>
     {% endfor %}
 
-    <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary px-4 py-2">Submit</button>
-        <a href="{% url 'supplier_list' %}" class="btn btn-secondary px-4 py-2">Πίσω</a>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-save"></i> Καταχώρηση
+        </button>
+        <a href="{% url 'supplier_list' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Πίσω
+        </a>
     </div>
   </form>
 </div>
