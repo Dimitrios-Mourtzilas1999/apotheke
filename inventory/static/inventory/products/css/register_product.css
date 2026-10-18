@@ -1,8 +1,8 @@
 /* ===== Form Container ===== */
-form.container {
-    background: rgba(28, 31, 38, 0.95); /* dark card style */
+.product-register-form {
+    background: rgba(28, 31, 38, 0.98); /* dark card style */
     color: #e6e9ef;
-    padding: 2rem;
+    padding: 2.5rem;
     border-radius: 20px;
     max-width: 700px;
     margin: 2rem auto;
@@ -10,10 +10,12 @@ form.container {
 }
 
 /* ===== Form Heading ===== */
-form h4 {
+.form-title {
     font-weight: 700;
     color: #0d6efd;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1.5rem;
 }
 
 /* ===== Labels ===== */
@@ -21,32 +23,38 @@ form h4 {
     display: block;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: #e6e9ef;
+    color: #ffffff;
+    font-size: 0.95rem;
 }
 
 /* ===== Form Inputs ===== */
 .form-control {
-    width: 95%;
-    padding: 0.75rem 1rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
     border-radius: 12px;
-    border: 1px solid #555;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
+    border: 2px solid #4a5568;
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
     transition: all 0.3s ease;
 }
 
 .form-control::placeholder {
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.5);
 }
 
 .form-control:focus {
     outline: none;
     border-color: #0d6efd;
-    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2);
-    background: rgba(255,255,255,0.15);
-    color: #fff;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
+}
+
+.form-control option {
+    background: #1c1f26;
+    color: #ffffff;
 }
 
 /* ===== Submit Button ===== */
@@ -73,6 +81,11 @@ form h4 {
 .row .col-md-6 {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+}
+
+/* ===== Form Groups ===== */
+.mb-3 {
+    margin-bottom: 1.5rem;
 }
 
 /* ===== File Input ===== */
