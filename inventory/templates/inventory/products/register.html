@@ -10,8 +10,9 @@
 {% block content %}
 {% include 'menu.html' %}
 
-<form action="{% url 'product_register' %}" method="POST" enctype="multipart/form-data"
-      class="container p-4 mt-4 shadow rounded bg-white">
+<div class="main-content">
+  <form action="{% url 'product_register' %}" method="POST" enctype="multipart/form-data"
+        class="container p-4 mt-4 shadow rounded bg-white">
     {% csrf_token %}
 
     <h4 class="mb-4 text-center">Register Product</h4>
@@ -55,5 +56,6 @@
     <div class="text-center mt-4">
         <button type="submit" class="btn btn-primary px-4 py-2">Καταχώρηση προϊόντος</button>
     </div>
-</form>
+  </form>
+</div>
 {% endblock %}

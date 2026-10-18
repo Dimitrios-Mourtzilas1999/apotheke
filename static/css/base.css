@@ -1,8 +1,15 @@
+/* ===== Flexbox Layout Container ===== */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== Flash Messages ===== */
 #flash-container {
   position: fixed;
   bottom: 1rem;
-  left: calc(240px + 2rem); /* sidebar width + spacing */
   right: 1rem;
+  left: calc(240px + 2rem); /* sidebar width + spacing */
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -12,13 +19,6 @@
 
 .flash-message {
   pointer-events: auto;
-}
-
-
-.main-content {
-  margin-left: 240px; /* Match sidebar width */
-  width: calc(100% - 240px);
-  box-sizing: border-box;
 }
 
 @keyframes slideDown {
@@ -32,10 +32,10 @@
   }
 }
 
+/* ===== Responsive ===== */
 @media (max-width: 1024px) {
-  .main-content {
-    margin-left: 0;
-    width: 100%;
+  .app-container {
+    flex-direction: column;
   }
 
   #flash-container {

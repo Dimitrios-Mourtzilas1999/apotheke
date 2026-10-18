@@ -26,10 +26,10 @@
     </div>
   {% endif %}
 
-  <!-- Page content -->
-  <main>
+  <!-- Page content with flexbox layout -->
+  <div class="app-container">
     {% block content %}{% endblock %}
-  </main>
+  </div>
 
   <!-- Bootstrap JS -->
   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>

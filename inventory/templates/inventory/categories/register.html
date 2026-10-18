@@ -9,13 +9,15 @@
 {% block content %}
 {% include "menu.html" %}
 
-<form action="{% url 'category_register' %}" method="POST">
-  {% csrf_token %}
+<div class="main-content">
+  <form action="{% url 'category_register' %}" method="POST">
+    {% csrf_token %}
 
-  <label for="{{ form.category_type.id_for_label }}">{{ form.category_type.label }}</label>
-  {{ form.category_type }}
-  {% include "field_errors.html" with field=form.category_type %}
+    <label for="{{ form.category_type.id_for_label }}">{{ form.category_type.label }}</label>
+    {{ form.category_type }}
+    {% include "field_errors.html" with field=form.category_type %}
 
-  <button type="submit">Καταχώρηση</button>
-</form>
+    <button type="submit">Καταχώρηση</button>
+  </form>
+</div>
 {% endblock %}

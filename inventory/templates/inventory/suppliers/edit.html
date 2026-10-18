@@ -10,7 +10,8 @@
 {% block content %}
 {% include 'menu.html' %}
 
-<form action="{% url 'supplier_edit' supplier.id %}" method="POST" class="container p-4 mt-4 shadow rounded bg-white">
+<div class="main-content">
+  <form action="{% url 'supplier_edit' supplier.id %}" method="POST" class="container p-4 mt-4 shadow rounded bg-white">
     {% csrf_token %}
 
     <h4 class="mb-4 text-center">Edit Supplier</h4>
@@ -28,5 +29,6 @@
         <button type="submit" class="btn btn-primary px-4 py-2">Submit</button>
         <a href="{% url 'supplier_list' %}" class="btn btn-secondary px-4 py-2">Πίσω</a>
     </div>
-</form>
+  </form>
+</div>
 {% endblock %}
