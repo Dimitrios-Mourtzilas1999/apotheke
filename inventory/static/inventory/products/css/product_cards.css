@@ -254,10 +254,13 @@
 
     .page-header {
         padding-top: 1rem;
+        margin-bottom: 1rem;
     }
 
     .view-controls {
         flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
     }
 
     .view-controls .btn {
@@ -267,5 +270,47 @@
 
     .row.g-4 {
         margin-top: 0.5rem;
+        gap: 0.5rem !important;
+    }
+
+    .card {
+        margin-bottom: 0.5rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
+        min-height: 2.5rem;
+    }
+
+    .card-text {
+        font-size: 0.85rem;
+    }
+
+    .card a.btn {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .placeholder-card-image {
+        height: 140px;
+        font-size: 1.5rem;
+    }
+
+    .card img.card-img-top {
+        height: 140px;
+    }
+
+    .qr-thumb {
+        width: 50px;
+        height: 50px;
+    }
+
+    .stock-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .barcode-text {
+        font-size: 0.8rem;
     }
 }
