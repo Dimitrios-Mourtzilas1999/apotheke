@@ -1,8 +1,17 @@
 {# Sidebar fragment. In Flask this file `extends base.html` and was {% include %}d, which nested a full page. #}
 {% with current=request.resolver_match.url_name %}
+<button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+  <i class="fa-solid fa-bars"></i>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <nav id="sidebarMenu" class="sidebar">
   <div>
     <div class="sidebar__header">
+      <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+        <i class="fa-solid fa-times"></i>
+      </button>
       <i class="fa-solid fa-store me-2"></i> Inventory
     </div>
 

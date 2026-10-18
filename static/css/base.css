@@ -43,3 +43,11 @@
     right: 1rem;
   }
 }
+
+@media (max-width: 768px) {
+  #flash-container {
+    bottom: 5rem; /* Make room for mobile menu button */
+    left: 1rem;
+    right: 1rem;
+  }
+}

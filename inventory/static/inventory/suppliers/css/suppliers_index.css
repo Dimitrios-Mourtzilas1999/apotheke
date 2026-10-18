@@ -108,3 +108,18 @@ h3.fw-bold {
         width: 100%;
     }
 }
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+        padding-top: 4rem; /* Space for hamburger button */
+    }
+
+    .content-wrapper {
+        padding: 0;
+    }
+
+    .page-header {
+        padding-top: 1rem;
+    }
+}

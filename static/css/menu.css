@@ -10,6 +10,54 @@
   box-sizing: border-box;
   flex-shrink: 0;         /* prevent sidebar from shrinking */
   transition: all 0.3s ease-in-out;
+  position: relative;
+  z-index: 1000;
+}
+
+/* ===== Mobile hamburger button ===== */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background: #2c3e50;
+  border: none;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  font-size: 1.25rem;
+}
+
+.mobile-menu-toggle:hover {
+  background: #34495e;
+}
+
+/* ===== Mobile close button ===== */
+.mobile-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  align-self: flex-end;
+  margin-right: 1rem;
+}
+
+/* ===== Overlay for mobile ===== */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
 }
 
 /* ===== Sidebar header ===== */
@@ -23,6 +71,8 @@
   color: #ecf0f1;
   margin-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  padding: 0 3rem;
 }
 
 /* ===== Sidebar actions list ===== */
@@ -93,29 +143,66 @@
   overflow-x: auto;        /* handle horizontal overflow */
 }
 
+/* ===== Mobile sidebar state ===== */
+.sidebar-open #sidebarMenu {
+  transform: translateX(0);
+}
+
+.sidebar-closed #sidebarMenu {
+  transform: translateX(-100%);
+}
+
 /* ===== Responsive adjustments ===== */
 @media (max-width: 768px) {
   #sidebarMenu {
-    width: 100%;
-    min-height: auto;
-    flex-direction: row;
-    justify-content: space-around;
-    padding: 0.5rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    box-shadow: 2px 0 8px rgba(0,0,0,0.3);
   }
 
-  .sidebar__actions {
-    flex-direction: row;
-    gap: 0.5rem;
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .user-info {
-    flex-direction: row;
-    border-top: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-    margin-left: auto;
-    padding-left: 1rem;
+  .mobile-close-btn {
+    display: block;
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+
+  .sidebar-open .sidebar-overlay {
+    display: block;
+  }
+
+  .sidebar-open #sidebarMenu {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    padding-top: 4rem; /* Space for hamburger button */
   }
 }
+
+/* ===== Desktop: Always show sidebar ===== */
+@media (min-width: 769px) {
+  #sidebarMenu {
+    transform: translateX(0) !important;
+  }
+
+  .mobile-menu-toggle,
+  .mobile-close-btn,
+  .sidebar-overlay {
+    display: none !important;
+  }
+}
+
 /* logout is a POST form button in Django (was a GET link in Flask) */
 button.sign-out-btn { background: none; border: 0; width: 100%; font: inherit; cursor: pointer; }
 .logout-form { margin: 0; }
