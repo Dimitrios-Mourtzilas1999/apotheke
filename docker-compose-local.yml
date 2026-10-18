@@ -16,6 +16,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: --default-authentication-plugin=mysql_native_password
 
   web:
     build: .
@@ -33,6 +34,8 @@ services:
       - "8001:8001"
     command: >
       sh -c "
+        echo 'Waiting for database to be ready...' &&
+        sleep 5 &&
         python manage.py migrate --fake-initial --noinput &&
         python manage.py collectstatic --noinput &&
         gunicorn config.wsgi:application --bind 0.0.0.0:8001 --workers 4 --threads 2 --timeout 120
