@@ -1,7 +1,18 @@
-/* Offset main content for fixed sidebar */
+/* Main content area */
 .main-content {
-    margin-left: 280px; /* adjust to your sidebar width */
     padding: 2rem;
+    background-color: #1a1d24;
+    min-height: 100vh;
+}
+
+/* Page header */
+h3.fw-bold {
+    color: #ffffff;
+}
+
+/* Empty state message */
+.text-muted {
+    color: #9ca3af;
 }
 
 /* Cards */
@@ -26,14 +37,19 @@
 
 /* Titles */
 .category-title {
-    color: #000000;
+    color: #ffffff;
     font-weight: 600;
+}
+
+/* Product count */
+.product-count {
+    color: #9ca3af;
 }
 
 /* Buttons */
 .btn-sm {
     padding: 0.35rem 0.8rem;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -42,7 +58,6 @@
 /* Responsive */
 @media (max-width: 992px) {
     .main-content {
-        margin-left: 0;
         padding: 1rem;
     }
 }
