@@ -64,9 +64,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": env.db(default="sqlite:///" + str(BASE_DIR / "db.sqlite3")),
-}
+# Database configuration
+# Try DATABASE_URL first (for Appliku), fallback to individual DB_* variables (for Docker/local)
+if env.str("DATABASE_URL", default=""):
+    DATABASES = {
+        "default": env.db(),
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": env.str("DB_NAME", default="inventory"),
+            "USER": env.str("DB_USERNAME", default="root"),
+            "PASSWORD": env.str("DB_PASSWORD", default=""),
+            "HOST": env.str("DB_HOST", default="localhost"),
+            "PORT": env.str("DB_PORT", default="3306"),
+            "OPTIONS": {"charset": "utf8mb4"},
+        }
+    }
 
 AUTH_USER_MODEL = "accounts.User"
 AUTHENTICATION_BACKENDS = ["accounts.backends.LegacyPasswordBackend"]
