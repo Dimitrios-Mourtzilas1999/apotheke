@@ -90,8 +90,8 @@ STATIC_URL = env.str("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = env.str("STATIC_ROOT", default=str(BASE_DIR / "staticfiles"))
 
-MEDIA_URL = env.str("MEDIA_URL", default="/media/")
-MEDIA_ROOT = env.str("MEDIA_ROOT", default=str(BASE_DIR / "media"))  # replaces static/uploads
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/app/media"  # Use Appliku volume mount point
 
 # Session configuration
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
