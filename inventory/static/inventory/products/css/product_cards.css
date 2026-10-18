@@ -105,3 +105,96 @@
     background-color: var(--primary-color);
     color: #fff;
 }
+
+/* Product card image styling */
+.card img.card-img-top {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.placeholder-card-image {
+    height: 180px;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 2rem;
+}
+
+/* QR code preview */
+.qr-preview {
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.qr-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    transition: transform 0.2s ease;
+}
+
+.qr-thumb:hover {
+    transform: scale(1.1);
+}
+
+/* Stock badges */
+.stock-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.stock-in_stock {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.stock-low_stock {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.stock-out_of_stock {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.stock-number {
+    margin-left: 0.5rem;
+    font-weight: 500;
+    color: var(--secondary-color);
+}
+
+/* Barcode text */
+.barcode-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    background-color: #f3f4f6;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+}
+
+/* Copy barcode button */
+.btn-copy-barcode {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+}
+
+.btn-copy-barcode:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+.btn-copy-barcode:active {
+    transform: scale(0.95);
+}

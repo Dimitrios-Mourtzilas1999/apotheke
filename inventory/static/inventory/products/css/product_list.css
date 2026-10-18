@@ -131,7 +131,90 @@
 
 .products-table td.stock {
   font-weight: 500;
-  color: #10b981;
+}
+
+/* Stock badges */
+.stock-badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.stock-in_stock {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.stock-low_stock {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.stock-out_of_stock {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.stock-number {
+  margin-left: 0.5rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* Product thumbnails */
+.product-thumbnail {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.placeholder-thumbnail {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* Barcode link styling */
+.barcode-link {
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.barcode-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Copy barcode button */
+.btn-copy-barcode {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.btn-copy-barcode:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.btn-copy-barcode:active {
+  transform: scale(0.95);
 }
 
 /* ====== TABLE WRAPPER ====== */

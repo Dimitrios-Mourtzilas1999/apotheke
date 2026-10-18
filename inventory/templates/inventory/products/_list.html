@@ -21,11 +21,32 @@
     <tr>
       <td><input type="checkbox" name="barcode" value="{{ product.barcode }}" class="checkbox"></td>
       <td>{{ forloop.counter|add:row_offset }}</td>
-      <td><a href="{% url 'product_edit' product.barcode %}">{{ product.barcode }}</a></td>
-      <td>{{ product.desc }}</td>
+      <td>
+        <div class="d-flex align-items-center gap-2">
+          <a href="{% url 'product_edit' product.barcode %}" class="barcode-link">{{ product.barcode }}</a>
+          <button class="btn-copy-barcode btn btn-sm btn-outline-secondary" data-barcode="{{ product.barcode }}" title="Αντιγραφή">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+        </div>
+      </td>
+      <td>
+        <div class="d-flex align-items-center gap-2">
+          {% if product.image_url %}
+            <img src="{{ product.image_url }}" class="product-thumbnail" alt="{{ product.desc }}">
+          {% else %}
+            <div class="product-thumbnail placeholder-thumbnail">
+              <i class="fa-solid fa-image"></i>
+            </div>
+          {% endif %}
+          <span>{{ product.desc|default:'-' }}</span>
+        </div>
+      </td>
       <td>{{ product.category.cat_type|default:'Χωρίς κατηγορία' }}</td>
       <td>{{ product.supplier.name|default:'Χωρίς προμηθευτή' }}</td>
-      <td>{{ product.stock }}</td>
+      <td>
+        <span class="badge stock-badge stock-{{ product.stock_status }}">{{ product.stock_status_label }}</span>
+        <span class="stock-number">{{ product.stock }}</span>
+      </td>
       <td>{{ product.price|default:0|floatformat:"2u" }} €</td>
     </tr>
     {% endfor %}

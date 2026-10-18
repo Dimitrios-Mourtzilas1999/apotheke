@@ -62,3 +62,21 @@ class Product(models.Model):
         if self.image:
             return f"/media/uploads/{self.image}"
         return None
+
+    @property
+    def stock_status(self):
+        if self.stock is None or self.stock == 0:
+            return "out_of_stock"
+        elif self.stock < 10:
+            return "low_stock"
+        else:
+            return "in_stock"
+
+    @property
+    def stock_status_label(self):
+        if self.stock is None or self.stock == 0:
+            return "Εξαντλημένο"
+        elif self.stock < 10:
+            return "Περιορισμένο"
+        else:
+            return "Διαθέσιμο"
