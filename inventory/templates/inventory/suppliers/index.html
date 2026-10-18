@@ -10,13 +10,13 @@
 {% include 'menu.html' %}
 
 <div class="main-content">
-  <div class="container-fluid">
+  <div class="content-wrapper">
 
     {% if suppliers %}
       <!-- Page Header -->
-      <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+      <div class="page-header">
         <h3 class="fw-bold"><i class="fa-solid fa-truck"></i> Προμηθευτές</h3>
-        <div class="d-flex gap-2">
+        <div class="header-actions">
           <a href="{% url 'supplier_register' %}" class="btn btn-primary btn-sm">
             <i class="fa-solid fa-plus"></i> Νέος Προμηθευτής
           </a>
@@ -50,9 +50,9 @@
         {% endfor %}
       </div>
     {% else %}
-    <div class="text-center mt-5">
+    <div class="empty-state">
       <h5 class="text-muted">Δεν υπάρχουν διαθέσιμοι προμηθευτές.</h5>
-      <a href="{% url 'supplier_register' %}" class="btn btn-primary btn-sm mt-2">Νέος Προμηθευτής</a>
+      <a href="{% url 'supplier_register' %}" class="btn btn-primary btn-sm">Νέος Προμηθευτής</a>
     </div>
     {% endif %}
   </div>
