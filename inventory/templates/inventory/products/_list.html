@@ -19,9 +19,9 @@
   <tbody id="productTableBody">
     {% for product in products %}
     <tr>
-      <td><input type="checkbox" name="barcode" value="{{ product.barcode }}" class="checkbox"></td>
-      <td>{{ forloop.counter|add:row_offset }}</td>
-      <td>
+      <td data-label="Επιλογή"><input type="checkbox" name="barcode" value="{{ product.barcode }}" class="checkbox"></td>
+      <td data-label="#">{{ forloop.counter|add:row_offset }}</td>
+      <td data-label="Κωδικός">
         <div class="d-flex align-items-center gap-2">
           <a href="{% url 'product_edit' product.barcode %}" class="barcode-link">{{ product.barcode }}</a>
           <button class="btn-copy-barcode btn btn-sm btn-outline-secondary" data-barcode="{{ product.barcode }}" title="Αντιγραφή">
@@ -29,7 +29,7 @@
           </button>
         </div>
       </td>
-      <td>
+      <td data-label="Περιγραφή">
         <div class="d-flex align-items-center gap-2">
           {% if product.image_url %}
             <img src="{{ product.image_url }}" class="product-thumbnail" alt="{{ product.desc }}">
@@ -41,13 +41,13 @@
           <span>{{ product.desc|default:'-' }}</span>
         </div>
       </td>
-      <td>{{ product.category.cat_type|default:'Χωρίς κατηγορία' }}</td>
-      <td>{{ product.supplier.name|default:'Χωρίς προμηθευτή' }}</td>
-      <td>
+      <td data-label="Κατηγορία">{{ product.category.cat_type|default:'Χωρίς κατηγορία' }}</td>
+      <td data-label="Προμηθευτής">{{ product.supplier.name|default:'Χωρίς προμηθευτή' }}</td>
+      <td data-label="Απόθεμα">
         <span class="badge stock-badge stock-{{ product.stock_status }}">{{ product.stock_status_label }}</span>
         <span class="stock-number">{{ product.stock }}</span>
       </td>
-      <td>{{ product.price|default:0|floatformat:"2u" }} €</td>
+      <td data-label="Τιμή">{{ product.price|default:0|floatformat:"2u" }} €</td>
     </tr>
     {% endfor %}
   </tbody>
