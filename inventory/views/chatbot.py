@@ -128,7 +128,7 @@ def chatbot_query(request):
         ]
         
         # System prompt
-        system_prompt = """You are a helpful inventory management assistant for a pharmacy/apothecary. 
+        system_prompt = """You are a helpful inventory management assistant. 
 You have access to tools that can retrieve real-time information from the inventory database.
 
 Your capabilities:
@@ -152,7 +152,7 @@ If a user asks about something you can't answer with the available tools, explai
 
         # Call Claude API with tools
         message = client.messages.create(
-            model="claude-3-sonnet-20240229",
+            model="claude-sonnet-5-5",
             max_tokens=4096,
             system=system_prompt,
             tools=tools,
@@ -173,13 +173,14 @@ If a user asks about something you can't answer with the available tools, explai
                     # Execute the tool
                     result = execute_tool(tool_name, tool_input)
                     tool_results.append({
+                        "type": "tool_result",
                         "tool_use_id": block.id,
-                        "output": str(result)
+                        "content": str(result)
                     })
             
             # Send tool results back to Claude
             message = client.messages.create(
-                model="claude-3-sonnet-20240229",
+                model="claude-sonnet-5-5",
                 max_tokens=4096,
                 system=system_prompt,
                 tools=tools,
