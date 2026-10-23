@@ -17,7 +17,8 @@ from django.test import RequestFactory
 def chatbot_query(request):
     """Handle chatbot queries using Claude API with tool-use"""
     try:
-        data = request.json
+        import json
+        data = json.loads(request.body)
         user_message = data.get("message", "").strip()
         
         if not user_message:
