@@ -1,11 +1,9 @@
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from allauth.socialaccount.views import OAuth2CallbackView
-from allauth.socialaccount.providers.google.views import OAuth2LoginView
 
 from .forms import ForgotPasswordForm, LoginForm, OTPVerificationForm, PasswordResetForm, SetNewPasswordForm
 from .models import PasswordResetOTP
@@ -15,18 +13,6 @@ class AppLoginView(LoginView):
     template_name = "accounts/login.html"
     authentication_form = LoginForm
     redirect_authenticated_user = True
-
-
-class GoogleLoginView(OAuth2LoginView):
-    adapter_class = "allauth.socialaccount.providers.google.provider.GoogleOAuth2Adapter"
-
-
-class GoogleCallbackView(OAuth2CallbackView):
-    adapter_class = "allauth.socialaccount.providers.google.provider.GoogleOAuth2Adapter"
-
-
-def google_login(request):
-    return GoogleLoginView.as_view()(request)
 
 
 def reset_password(request):
