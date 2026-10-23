@@ -30,6 +30,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "accounts",
     "inventory",
 ]
@@ -84,10 +89,24 @@ else:
     }
 
 AUTH_USER_MODEL = "accounts.User"
-AUTHENTICATION_BACKENDS = ["accounts.backends.LegacyPasswordBackend"]
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+    "accounts.backends.LegacyPasswordBackend",
+]
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
+
+# Django Allauth configuration
+SITE_ID = 1
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = False
+ACCOUNT_LOGIN_ON_EMAIL_VERIFICATION = False
+ACCOUNT_ADAPTER = "accounts.adapters.AccountAdapter"
+SOCIALACCOUNT_ADAPTER = "accounts.adapters.SocialAccountAdapter"
 
 # Fresh, salted hashing for all new/rehashed passwords
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.PBKDF2PasswordHasher"]
@@ -127,6 +146,24 @@ EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
 EMAIL_TIMEOUT = 30
+
+# Social Auth configuration
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", default="")
+SOCIAL_AUTH_GOOGLE_CLIENT_ID = env.str("SOCIAL_AUTH_GOOGLE_CLIENT_ID", default="")
+SOCIAL_AUTH_GOOGLE_CLIENT_SECRET = env.str("SOCIAL_AUTH_GOOGLE_CLIENT_SECRET", default="")
+SOCIAL_AUTH_GOOGLE_SCOPE = ["profile", "email"]
+SOCIAL_AUTH_GOOGLE_PROVIDER = "google"
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {
+            "access_type": "offline",
+        },
+    }
+}
+
+# Anthropic API configuration
+ANTHROPIC_API_KEY = env.str("ANTHROPIC_API_KEY", default="")
 
 # Required when running behind Appliku's reverse proxy
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

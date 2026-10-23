@@ -1,12 +1,13 @@
 """URL paths are identical to the Flask app so the existing JS keeps working."""
 from django.urls import path
 
-from .views import categories, dashboard, products, suppliers
+from .views import categories, dashboard, products, suppliers, chatbot
 
 urlpatterns = [
     path("dashboard", dashboard.dashboard, name="dashboard"),
     path("filters", dashboard.filters, name="filters"),
     path("clear-filters", dashboard.clear_filters, name="clear_filters"),
+    path("chatbot", chatbot.chatbot_query, name="chatbot_query"),
 
     path("category/list", categories.category_list, name="category_list"),
     path("category/info/<int:cat_id>", categories.category_info, name="category_info"),

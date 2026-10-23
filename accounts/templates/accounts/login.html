@@ -3,6 +3,7 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'accounts/css/login.css' %}">
 <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 {% endblock %}
 
 {% block js %}
@@ -49,6 +50,16 @@
             </div>
 
             <button type="submit" class="btn btn-primary btn-login">Σύνδεση</button>
+            
+            <div class="divider">
+                <span>ή</span>
+            </div>
+            
+            <a href="{% url 'google_login' %}" class="btn btn-google">
+                <i class="fa-brands fa-google"></i>
+                Σύνδεση με Google
+            </a>
+            
             <div class="mt-3">
                 <a href="{% url 'forgot_password' %}" class="text-decoration-none">Ξεχάσατε τον κωδικό;</a>
             </div>

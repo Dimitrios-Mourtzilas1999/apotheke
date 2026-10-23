@@ -2,6 +2,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/css/chatbot.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 {% endblock %}
@@ -15,6 +16,7 @@
   window.supplierData = JSON.parse(document.getElementById("supplier-data").textContent);
 </script>
 <script src="{% static 'js/dashboard.js' %}"></script>
+<script src="{% static 'inventory/js/chatbot.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -66,6 +68,40 @@
           <h5><i class="fa-solid fa-chart-pie me-2"></i> Κατανομή Προϊόντων ανά Προμηθευτή</h5>
           <canvas id="supplierChart"></canvas>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Chatbot Widget ===== -->
+  <div class="chatbot-widget">
+    <button class="chatbot-toggle" id="chatbotToggle" title="Open Chatbot">
+      <i class="fa-solid fa-robot"></i>
+    </button>
+    
+    <div class="chatbot-window" id="chatbotWindow">
+      <div class="chatbot-header">
+        <h6><i class="fa-solid fa-robot me-2"></i> Inventory Assistant</h6>
+        <button class="chatbot-close" id="chatbotClose" title="Close">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="chatbot-messages" id="chatbotMessages">
+        <div class="chatbot-message bot">
+          <div class="message-sender">Assistant</div>
+          <div class="message-content">Γεια σας! Είμαι ο βοηθός σας για τη διαχείριση του αποθέματος. Πώς μπορώ να σας βοηθήσω σήμερα;</div>
+        </div>
+      </div>
+      
+      <div class="chatbot-typing" id="chatbotTyping">
+        <i class="fa-solid fa-circle-notch fa-spin"></i> Γράφει...
+      </div>
+      
+      <div class="chatbot-input-area">
+        <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Πληκτρολογήστε το μήνυμά σας..." maxlength="500">
+        <button class="chatbot-send" id="chatbotSend" title="Send">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
       </div>
     </div>
   </div>

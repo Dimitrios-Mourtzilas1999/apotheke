@@ -8,3 +8,6 @@ pillow==10.4.0
 gunicorn
 whitenoise
 environ
+django-allauth
+django-allauth[socialaccount]
+anthropic
