@@ -48,6 +48,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -62,6 +63,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "allauth.account.context_processors.account",
             ],
         },
     },
@@ -98,11 +100,12 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
 
+SILENCED_SYSTEM_CHECKS = ["account.W004", "models.W036"]
+
 # Django Allauth configuration
 SITE_ID = 1
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {"username"}
+ACCOUNT_SIGNUP_FIELDS = ["username", "password1", "password2"]
 ACCOUNT_UNIQUE_EMAIL = False
 ACCOUNT_LOGIN_ON_EMAIL_VERIFICATION = False
 ACCOUNT_ADAPTER = "accounts.adapters.AccountAdapter"
