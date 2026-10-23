@@ -108,10 +108,22 @@ def api_product_detail(request, product_id):
 def api_categories(request):
     """API endpoint to retrieve categories with product counts"""
     try:
+        page = int(request.GET.get('page', 1))
+        per_page = int(request.GET.get('per_page', 20))
+        search = request.GET.get('search', '')
+
         categories = Category.objects.annotate(
             product_count=Count('products'),
             total_stock=Sum('products__stock')
         ).all()
+
+        # Search by category type
+        if search:
+            categories = categories.filter(cat_type__icontains=search)
+
+        # Paginate
+        paginator = Paginator(categories, per_page)
+        categories_page = paginator.get_page(page)
 
         data = {
             'categories': [
@@ -121,8 +133,14 @@ def api_categories(request):
                     'product_count': c.product_count or 0,
                     'total_stock': c.total_stock or 0,
                 }
-                for c in categories
-            ]
+                for c in categories_page
+            ],
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': paginator.count,
+                'total_pages': paginator.num_pages,
+            }
         }
 
         return JsonResponse(data)
@@ -135,8 +153,22 @@ def api_categories(request):
 def api_category_detail(request, category_id):
     """API endpoint to retrieve a single category with its products"""
     try:
+        page = int(request.GET.get('page', 1))
+        per_page = int(request.GET.get('per_page', 20))
+        search = request.GET.get('search', '')
+
         category = Category.objects.get(id=category_id)
         products = category.products.select_related('supplier').all()
+
+        # Search products
+        if search:
+            products = products.filter(
+                Q(barcode__icontains=search) | Q(desc__icontains=search)
+            )
+
+        # Paginate
+        paginator = Paginator(products, per_page)
+        products_page = paginator.get_page(page)
 
         data = {
             'id': category.id,
@@ -151,8 +183,14 @@ def api_category_detail(request, category_id):
                     'stock': p.stock,
                     'price': p.price,
                 }
-                for p in products
-            ]
+                for p in products_page
+            ],
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': paginator.count,
+                'total_pages': paginator.num_pages,
+            }
         }
 
         return JsonResponse(data)
@@ -167,9 +205,21 @@ def api_category_detail(request, category_id):
 def api_suppliers(request):
     """API endpoint to retrieve suppliers with product counts"""
     try:
+        page = int(request.GET.get('page', 1))
+        per_page = int(request.GET.get('per_page', 20))
+        search = request.GET.get('search', '')
+
         suppliers = Supplier.objects.annotate(
             product_count=Count('products')
         ).all()
+
+        # Search by name
+        if search:
+            suppliers = suppliers.filter(name__icontains=search)
+
+        # Paginate
+        paginator = Paginator(suppliers, per_page)
+        suppliers_page = paginator.get_page(page)
 
         data = {
             'suppliers': [
@@ -180,8 +230,14 @@ def api_suppliers(request):
                     'email': s.email,
                     'product_count': s.product_count or 0,
                 }
-                for s in suppliers
-            ]
+                for s in suppliers_page
+            ],
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': paginator.count,
+                'total_pages': paginator.num_pages,
+            }
         }
 
         return JsonResponse(data)
@@ -194,13 +250,26 @@ def api_suppliers(request):
 def api_supplier_detail(request, supplier_id):
     """API endpoint to retrieve a single supplier with its products"""
     try:
+        page = int(request.GET.get('page', 1))
+        per_page = int(request.GET.get('per_page', 20))
+        search = request.GET.get('search', '')
+
         supplier = Supplier.objects.get(id=supplier_id)
         products = supplier.products.select_related('category').all()
+
+        # Search products
+        if search:
+            products = products.filter(
+                Q(barcode__icontains=search) | Q(desc__icontains=search)
+            )
+
+        # Paginate
+        paginator = Paginator(products, per_page)
+        products_page = paginator.get_page(page)
 
         data = {
             'id': supplier.id,
             'name': supplier.name,
-            'address': supplier.address,
             'phone': supplier.phone,
             'email': supplier.email,
             'product_count': products.count(),
@@ -213,8 +282,14 @@ def api_supplier_detail(request, supplier_id):
                     'stock': p.stock,
                     'price': p.price,
                 }
-                for p in products
-            ]
+                for p in products_page
+            ],
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': paginator.count,
+                'total_pages': paginator.num_pages,
+            }
         }
 
         return JsonResponse(data)
@@ -229,6 +304,9 @@ def api_supplier_detail(request, supplier_id):
 def api_stock_summary(request):
     """API endpoint to retrieve stock summary information"""
     try:
+        page = int(request.GET.get('page', 1))
+        per_page = int(request.GET.get('per_page', 20))
+
         products = Product.objects.all()
 
         total_products = products.count()
@@ -236,8 +314,10 @@ def api_stock_summary(request):
         out_of_stock = products.filter(stock=0).count()
         total_stock = products.aggregate(Sum('stock'))['stock__sum'] or 0
 
-        # Get low stock products
-        low_stock_products = products.filter(stock__lt=10).select_related('category', 'supplier')[:10]
+        # Get low stock products with pagination
+        low_stock_products = products.filter(stock__lt=10).select_related('category', 'supplier')
+        paginator = Paginator(low_stock_products, per_page)
+        low_stock_page = paginator.get_page(page)
 
         data = {
             'summary': {
@@ -254,8 +334,14 @@ def api_stock_summary(request):
                     'category': p.category.cat_type if p.category else None,
                     'stock': p.stock,
                 }
-                for p in low_stock_products
-            ]
+                for p in low_stock_page
+            ],
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': paginator.count,
+                'total_pages': paginator.num_pages,
+            }
         }
 
         return JsonResponse(data)

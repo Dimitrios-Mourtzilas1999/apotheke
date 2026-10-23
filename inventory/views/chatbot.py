@@ -75,21 +75,46 @@ def chatbot_query(request):
             },
             {
                 "name": "get_categories",
-                "description": "Get all categories with product counts and total stock",
+                "description": "Get all categories with product counts and total stock. Supports pagination and search.",
                 "input_schema": {
                     "type": "object",
-                    "properties": {}
+                    "properties": {
+                        "page": {
+                            "type": "integer",
+                            "description": "Page number (default: 1)"
+                        },
+                        "per_page": {
+                            "type": "integer",
+                            "description": "Items per page (default: 20)"
+                        },
+                        "search": {
+                            "type": "string",
+                            "description": "Search term for category type"
+                        }
+                    }
                 }
             },
             {
                 "name": "get_category",
-                "description": "Get a specific category with its products",
+                "description": "Get a specific category with its products. Supports pagination and search.",
                 "input_schema": {
                     "type": "object",
                     "properties": {
                         "category_id": {
                             "type": "integer",
                             "description": "Category ID"
+                        },
+                        "page": {
+                            "type": "integer",
+                            "description": "Page number (default: 1)"
+                        },
+                        "per_page": {
+                            "type": "integer",
+                            "description": "Items per page (default: 20)"
+                        },
+                        "search": {
+                            "type": "string",
+                            "description": "Search term for products"
                         }
                     },
                     "required": ["category_id"]
@@ -97,21 +122,46 @@ def chatbot_query(request):
             },
             {
                 "name": "get_suppliers",
-                "description": "Get all suppliers with product counts",
+                "description": "Get all suppliers with product counts. Supports pagination and search.",
                 "input_schema": {
                     "type": "object",
-                    "properties": {}
+                    "properties": {
+                        "page": {
+                            "type": "integer",
+                            "description": "Page number (default: 1)"
+                        },
+                        "per_page": {
+                            "type": "integer",
+                            "description": "Items per page (default: 20)"
+                        },
+                        "search": {
+                            "type": "string",
+                            "description": "Search term for supplier name"
+                        }
+                    }
                 }
             },
             {
                 "name": "get_supplier",
-                "description": "Get a specific supplier with its products",
+                "description": "Get a specific supplier with its products. Supports pagination and search.",
                 "input_schema": {
                     "type": "object",
                     "properties": {
                         "supplier_id": {
                             "type": "integer",
                             "description": "Supplier ID"
+                        },
+                        "page": {
+                            "type": "integer",
+                            "description": "Page number (default: 1)"
+                        },
+                        "per_page": {
+                            "type": "integer",
+                            "description": "Items per page (default: 20)"
+                        },
+                        "search": {
+                            "type": "string",
+                            "description": "Search term for products"
                         }
                     },
                     "required": ["supplier_id"]
@@ -119,10 +169,19 @@ def chatbot_query(request):
             },
             {
                 "name": "get_stock_summary",
-                "description": "Get stock summary including total products, low stock count, out of stock count, and total stock",
+                "description": "Get stock summary including total products, low stock count, out of stock count, and total stock. Supports pagination for low stock products.",
                 "input_schema": {
                     "type": "object",
-                    "properties": {}
+                    "properties": {
+                        "page": {
+                            "type": "integer",
+                            "description": "Page number for low stock products (default: 1)"
+                        },
+                        "per_page": {
+                            "type": "integer",
+                            "description": "Items per page for low stock products (default: 20)"
+                        }
+                    }
                 }
             }
         ]
@@ -222,7 +281,8 @@ def execute_tool(tool_name, tool_input):
                 "category": tool_input.get("category_id"),
                 "supplier": tool_input.get("supplier_id"),
                 "low_stock": tool_input.get("low_stock", False),
-                "per_page": 20
+                "page": tool_input.get("page", 1),
+                "per_page": tool_input.get("per_page", 20),
             })
             response = api_products(request)
             return json.loads(response.content.decode('utf-8'))
@@ -234,29 +294,48 @@ def execute_tool(tool_name, tool_input):
             return json.loads(response.content.decode('utf-8'))
         
         elif tool_name == "get_categories":
-            request = factory.get('/api/categories')
+            request = factory.get('/api/categories', {
+                "page": tool_input.get("page", 1),
+                "per_page": tool_input.get("per_page", 20),
+                "search": tool_input.get("search", ""),
+            })
             response = api_categories(request)
             return json.loads(response.content.decode('utf-8'))
         
         elif tool_name == "get_category":
             category_id = tool_input.get("category_id")
-            request = factory.get(f'/api/category/{category_id}')
+            request = factory.get(f'/api/category/{category_id}', {
+                "page": tool_input.get("page", 1),
+                "per_page": tool_input.get("per_page", 20),
+                "search": tool_input.get("search", ""),
+            })
             response = api_category_detail(request, category_id)
             return json.loads(response.content.decode('utf-8'))
         
         elif tool_name == "get_suppliers":
-            request = factory.get('/api/suppliers')
+            request = factory.get('/api/suppliers', {
+                "page": tool_input.get("page", 1),
+                "per_page": tool_input.get("per_page", 20),
+                "search": tool_input.get("search", ""),
+            })
             response = api_suppliers(request)
             return json.loads(response.content.decode('utf-8'))
         
         elif tool_name == "get_supplier":
             supplier_id = tool_input.get("supplier_id")
-            request = factory.get(f'/api/supplier/{supplier_id}')
+            request = factory.get(f'/api/supplier/{supplier_id}', {
+                "page": tool_input.get("page", 1),
+                "per_page": tool_input.get("per_page", 20),
+                "search": tool_input.get("search", ""),
+            })
             response = api_supplier_detail(request, supplier_id)
             return json.loads(response.content.decode('utf-8'))
         
         elif tool_name == "get_stock_summary":
-            request = factory.get('/api/stock-summary')
+            request = factory.get('/api/stock-summary', {
+                "page": tool_input.get("page", 1),
+                "per_page": tool_input.get("per_page", 20),
+            })
             response = api_stock_summary(request)
             return json.loads(response.content.decode('utf-8'))
         
