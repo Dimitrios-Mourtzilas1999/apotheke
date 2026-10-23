@@ -165,10 +165,13 @@ If a user asks about something you can't answer with the available tools, explai
         while message.stop_reason == "tool_use":
             # Execute tool calls
             tool_results = []
+            tool_use_blocks = []
+            
             for block in message.content:
                 if block.type == "tool_use":
                     tool_name = block.name
                     tool_input = block.input
+                    tool_use_blocks.append(block)
                     
                     # Execute the tool
                     result = execute_tool(tool_name, tool_input)
@@ -178,7 +181,7 @@ If a user asks about something you can't answer with the available tools, explai
                         "content": str(result)
                     })
             
-            # Send tool results back to Claude
+            # Send tool results back to Claude - only include tool_use blocks
             message = client.messages.create(
                 model="claude-sonnet-5-5",
                 max_tokens=4096,
@@ -186,7 +189,7 @@ If a user asks about something you can't answer with the available tools, explai
                 tools=tools,
                 messages=[
                     {"role": "user", "content": user_message},
-                    {"role": "assistant", "content": message.content},
+                    {"role": "assistant", "content": tool_use_blocks},
                     {"role": "user", "content": tool_results}
                 ]
             )
