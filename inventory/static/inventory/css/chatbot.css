@@ -124,6 +124,26 @@
     opacity: 0.7;
 }
 
+.chatbot-message .message-content {
+    line-height: 1.5;
+}
+
+.chatbot-message .message-content strong {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.chatbot-message .message-content em {
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.chatbot-message .message-content br {
+    display: block;
+    margin: 0.25rem 0;
+    content: "";
+}
+
 .chatbot-input-area {
     padding: 1rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);

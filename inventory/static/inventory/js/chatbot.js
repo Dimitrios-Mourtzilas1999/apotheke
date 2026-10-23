@@ -10,11 +10,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Toggle chatbot window
     chatbotToggle.addEventListener('click', function() {
         chatbotWindow.classList.toggle('open');
+        if (chatbotWindow.classList.contains('open')) {
+            chatbotInput.focus();
+        }
     });
 
     // Close chatbot window
     chatbotClose.addEventListener('click', function() {
         chatbotWindow.classList.remove('open');
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && chatbotWindow.classList.contains('open')) {
+            chatbotWindow.classList.remove('open');
+        }
     });
 
     // Send message on Enter key
@@ -29,6 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
     chatbotSend.addEventListener('click', function() {
         const message = chatbotInput.value.trim();
         if (!message) return;
+
+        // Disable send button while processing
+        chatbotSend.disabled = true;
+        chatbotInput.disabled = true;
 
         // Add user message to chat
         addMessage('user', message);
@@ -49,6 +63,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             chatbotTyping.classList.remove('show');
+            chatbotSend.disabled = false;
+            chatbotInput.disabled = false;
+            chatbotInput.focus();
+            
             if (data.success) {
                 addMessage('bot', data.response);
             } else {
@@ -57,6 +75,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             chatbotTyping.classList.remove('show');
+            chatbotSend.disabled = false;
+            chatbotInput.disabled = false;
+            chatbotInput.focus();
             addMessage('bot', 'Συγνώμη: Παρουσιάστηκε σφάλμα σύνδεσης. Παρακαλώ δοκιμάστε ξανά.');
             console.error('Chatbot error:', error);
         });
@@ -72,13 +93,28 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
-        contentDiv.textContent = content;
+        
+        // Handle markdown-like formatting
+        contentDiv.innerHTML = formatMessage(content);
         
         messageDiv.appendChild(senderDiv);
         messageDiv.appendChild(contentDiv);
         
         chatbotMessages.appendChild(messageDiv);
         chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    function formatMessage(text) {
+        // Simple formatting - convert newlines to <br>
+        let formatted = text.replace(/\n/g, '<br>');
+        
+        // Bold text **text**
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Italic text *text*
+        formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        return formatted;
     }
 
     function getCookie(name) {
