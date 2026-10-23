@@ -152,7 +152,7 @@ If a user asks about something you can't answer with the available tools, explai
 
         # Call Claude API with tools
         message = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-sonnet-20240229",
             max_tokens=4096,
             system=system_prompt,
             tools=tools,
@@ -179,7 +179,7 @@ If a user asks about something you can't answer with the available tools, explai
             
             # Send tool results back to Claude
             message = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-3-sonnet-20240229",
                 max_tokens=4096,
                 system=system_prompt,
                 tools=tools,
