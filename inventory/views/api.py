@@ -23,7 +23,7 @@ def api_products(request):
         # Search by barcode or description
         if query:
             products = products.filter(
-                Q(barcode__icontains=query) | Q(description__icontains=query)
+                Q(barcode__icontains=query) | Q(desc__icontains=query)
             )
 
         # Filter by category
@@ -48,13 +48,13 @@ def api_products(request):
                 {
                     'id': p.id,
                     'barcode': p.barcode,
-                    'description': p.description,
+                    'description': p.desc,
                     'category': p.category.cat_type if p.category else None,
                     'supplier': p.supplier.name if p.supplier else None,
                     'stock': p.stock,
                     'price': p.price,
-                    'image': p.image.url if p.image else None,
-                    'qr_code': p.qr_code.url if p.qr_code else None,
+                    'image': p.image_url if p.image else None,
+                    'qr_code': f"/media/qrcodes/{p.qr_code}" if p.qr_code else None,
                 }
                 for p in products_page
             ],
@@ -85,14 +85,14 @@ def api_product_detail(request, product_id):
         data = {
             'id': product.id,
             'barcode': product.barcode,
-            'description': product.description,
+            'description': product.desc,
             'category': product.category.cat_type if product.category else None,
             'supplier': product.supplier.name if product.supplier else None,
             'stock': product.stock,
             'price': product.price,
-            'image': product.image.url if product.image else None,
-            'qr_code': product.qr_code.url if product.qr_code else None,
-            'date_added': product.date_added.isoformat() if product.date_added else None,
+            'image': product.image_url if product.image else None,
+            'qr_code': f"/media/qrcodes/{product.qr_code}" if product.qr_code else None,
+            'date_added': product.date_created.isoformat() if product.date_created else None,
             'date_updated': product.date_updated.isoformat() if product.date_updated else None,
         }
 
@@ -146,7 +146,7 @@ def api_category_detail(request, category_id):
                 {
                     'id': p.id,
                     'barcode': p.barcode,
-                    'description': p.description,
+                    'description': p.desc,
                     'supplier': p.supplier.name if p.supplier else None,
                     'stock': p.stock,
                     'price': p.price,
@@ -176,7 +176,6 @@ def api_suppliers(request):
                 {
                     'id': s.id,
                     'name': s.name,
-                    'address': s.address,
                     'phone': s.phone,
                     'email': s.email,
                     'product_count': s.product_count or 0,
@@ -209,7 +208,7 @@ def api_supplier_detail(request, supplier_id):
                 {
                     'id': p.id,
                     'barcode': p.barcode,
-                    'description': p.description,
+                    'description': p.desc,
                     'category': p.category.cat_type if p.category else None,
                     'stock': p.stock,
                     'price': p.price,
@@ -251,7 +250,7 @@ def api_stock_summary(request):
                 {
                     'id': p.id,
                     'barcode': p.barcode,
-                    'description': p.description,
+                    'description': p.desc,
                     'category': p.category.cat_type if p.category else None,
                     'stock': p.stock,
                 }
