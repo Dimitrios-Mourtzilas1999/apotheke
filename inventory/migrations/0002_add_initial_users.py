@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ("accounts", "0002_user_email_passwordresetotp"),
         ("inventory", "0001_initial"),
     ]
 
