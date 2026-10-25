@@ -89,9 +89,33 @@ class AppTests(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.context["total_products"], 2)
         self.assertEqual(r.context["total_stock_value"], 17)
-        self.assertEqual(r.context["category_data"], {"labels": ["C1"], "values": [1]})
+        self.assertEqual(r.context["category_data"],
+                         {"labels": ["C1", "Χωρίς κατηγορία"], "values": [15, 2], "counts": [1, 1]})
         self.assertContains(r, 'id="category-data"')
         self.assertContains(r, 'name="csrf-token"')
+
+    def test_dashboard_stock_status_and_reorder_list(self):
+        Product.objects.create(barcode="in", stock=10, price=1)
+        Product.objects.create(barcode="low", desc="Low", stock=3, price=None)
+        Product.objects.create(barcode="zero", stock=0, price=4)
+        Product.objects.create(barcode="none", stock=None, price=4)
+        r = self.c.get("/dashboard")
+        self.assertEqual(r.context["total_stock_value"], 10)
+        self.assertEqual(r.context["stock_status_data"]["values"], [1, 1, 2])
+        self.assertEqual((r.context["low_stock_count"], r.context["out_of_stock_count"]), (1, 2))
+        self.assertEqual([p.barcode for p in r.context["reorder_products"]], ["none", "zero", "low"])
+        self.assertContains(r, '/product/edit/low')
+
+    def test_dashboard_groups_tail_into_other(self):
+        for i in range(10):
+            sup = Supplier.objects.create(name=f"S{i}")
+            Product.objects.create(barcode=str(i), price=1, stock=10 + i, supplier=sup)
+        data = self.c.get("/dashboard").context["supplier_data"]
+        self.assertEqual(len(data["labels"]), 8)
+        self.assertEqual(data["labels"][0], "S9")
+        self.assertEqual(data["labels"][-1], "Λοιπά")
+        self.assertEqual(sum(data["values"]), sum(10 + i for i in range(10)))
+        self.assertEqual(sum(data["counts"]), 10)
 
     def test_filters_endpoints(self):
         r = self.c.post("/filters", json.dumps({"barcode": "9"}), content_type="application/json")

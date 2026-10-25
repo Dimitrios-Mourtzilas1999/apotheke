@@ -1,93 +1,111 @@
 // dashboard.js
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Dashboard initialized");
+  const readJson = (id) => {
+    const el = document.getElementById(id);
+    return el ? JSON.parse(el.textContent) : { labels: [], values: [] };
+  };
 
-  // ===== CHART CONFIG HELPERS =====
-  const defaultColors = [
-    "#0d6efd", "#6610f2", "#6f42c1", "#20c997",
-    "#198754", "#ffc107", "#dc3545", "#0dcaf0",
-    "#fd7e14", "#adb5bd"
-  ];
+  const euro = new Intl.NumberFormat("el-GR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  const euroCompact = new Intl.NumberFormat("el-GR", { style: "currency", currency: "EUR", notation: "compact" });
+  const number = new Intl.NumberFormat("el-GR");
+  const textColor = "#e6e9ef";
+  const gridColor = "rgba(255, 255, 255, 0.08)";
 
-  /**
-   * Initialize a chart safely
-   * @param {string} id - Canvas element ID
-   * @param {string} type - Chart type ('pie', 'doughnut', etc.)
-   * @param {Object} dataObj - { labels: [...], values: [...] }
-   * @param {Object} [options={}] - Optional Chart.js overrides
-   */
-  const initChart = (id, type, dataObj, options = {}) => {
+  const showEmpty = (canvas, message) => {
+    const p = document.createElement("p");
+    p.className = "chart-empty";
+    p.textContent = message;
+    canvas.parentElement.replaceWith(p);
+  };
+
+  const initStatusChart = (id, dataObj) => {
     const canvas = document.getElementById(id);
     if (!canvas) return;
+    const total = dataObj.values.reduce((a, b) => a + b, 0);
+    if (!total) return showEmpty(canvas, "Δεν υπάρχουν προϊόντα.");
 
-    const ctx = canvas.getContext("2d");
-    const data = {
-      labels: dataObj.labels,
-      datasets: [
-        {
+    new Chart(canvas, {
+      type: "doughnut",
+      data: {
+        labels: dataObj.labels,
+        datasets: [{
           data: dataObj.values,
-          backgroundColor: defaultColors.slice(0, dataObj.values.length),
+          backgroundColor: ["#22c55e", "#eab308", "#ef4444"],
           borderColor: "#1c1f26",
           borderWidth: 2,
           hoverOffset: 6
-        }
-      ]
-    };
-
-    const defaultOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "bottom",
-          labels: {
-            color: "#e6e9ef",
-            font: { size: 13 }
-          }
-        },
-        tooltip: {
-          callbacks: {
-            label: (ctx) => `${ctx.label}: ${ctx.formattedValue}`
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "60%",
+        plugins: {
+          legend: { position: "bottom", labels: { color: textColor, font: { size: 13 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.label}: ${number.format(ctx.parsed)} (${Math.round((ctx.parsed / total) * 100)}%)`
+            }
           }
         }
       }
-    };
-
-    new Chart(ctx, {
-      type,
-      data,
-      options: { ...defaultOptions, ...options }
     });
   };
 
-  // ===== FETCH DATA FROM EMBEDDED JSON =====
-  // These are injected by Flask: {{ category_data|tojson }} and {{ supplier_data|tojson }}
-  const categoryData = window.categoryData || {};
-  const supplierData = window.supplierData || {};
+  // Horizontal bars sorted by value: easier to compare than pie slices once there are more than a few groups.
+  const initValueBarChart = (id, dataObj, color) => {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    if (!dataObj.labels.length) return showEmpty(canvas, "Δεν υπάρχουν δεδομένα.");
 
-  // ===== INITIALIZE CHARTS =====
-  initChart("categoryChart", "pie", categoryData);
-  initChart("supplierChart", "doughnut", supplierData);
-
-  // ===== OPTIONAL: ANIMATED COUNTERS =====
-  const counters = document.querySelectorAll(".summary-card p");
-  counters.forEach(counter => {
-    const value = parseFloat(counter.textContent.replace(/[^\d.]/g, ""));
-    if (isNaN(value)) return;
-
-    let start = 0;
-    const duration = 800; // in ms
-    const increment = value / (duration / 16); // frame = ~16ms
-
-    const animate = () => {
-      start += increment;
-      if (start >= value) {
-        counter.textContent = value.toLocaleString();
-        return;
+    new Chart(canvas, {
+      type: "bar",
+      data: {
+        labels: dataObj.labels,
+        datasets: [{ data: dataObj.values, backgroundColor: color, borderRadius: 6, maxBarThickness: 28 }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => euro.format(ctx.parsed.x),
+              afterLabel: (ctx) => `${number.format(dataObj.counts[ctx.dataIndex])} προϊόντα`
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { color: textColor, maxTicksLimit: 6, maxRotation: 0, callback: (v) => euroCompact.format(v) },
+            grid: { color: gridColor }
+          },
+          y: { ticks: { color: textColor }, grid: { display: false } }
+        }
       }
-      counter.textContent = Math.floor(start).toLocaleString();
-      requestAnimationFrame(animate);
+    });
+  };
+
+  initStatusChart("stockStatusChart", readJson("stock-status-data"));
+  initValueBarChart("categoryChart", readJson("category-data"), "#0d6efd");
+  initValueBarChart("supplierChart", readJson("supplier-data"), "#20c997");
+
+  // ===== ANIMATED COUNTERS =====
+  document.querySelectorAll(".summary-card p[data-count]").forEach((counter) => {
+    const value = Number(counter.dataset.count);
+    const suffix = counter.dataset.suffix || "";
+    if (!Number.isFinite(value)) return;
+
+    const duration = 800;
+    const startTime = performance.now();
+    const step = (now) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      counter.textContent = number.format(Math.round(value * progress)) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
     };
-    requestAnimationFrame(animate);
+    requestAnimationFrame(step);
   });
 });

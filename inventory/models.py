@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+LOW_STOCK_THRESHOLD = 10
+
 
 class Category(models.Model):
     cat_type = models.CharField(max_length=100, null=True, blank=True)
@@ -67,7 +69,7 @@ class Product(models.Model):
     def stock_status(self):
         if self.stock is None or self.stock == 0:
             return "out_of_stock"
-        elif self.stock < 10:
+        elif self.stock < LOW_STOCK_THRESHOLD:
             return "low_stock"
         else:
             return "in_stock"
@@ -76,7 +78,7 @@ class Product(models.Model):
     def stock_status_label(self):
         if self.stock is None or self.stock == 0:
             return "Εξαντλημένο"
-        elif self.stock < 10:
+        elif self.stock < LOW_STOCK_THRESHOLD:
             return "Περιορισμένο"
         else:
             return "Διαθέσιμο"

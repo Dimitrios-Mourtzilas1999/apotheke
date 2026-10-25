@@ -8,13 +8,10 @@
 {% endblock %}
 
 {% block js %}
+{{ stock_status_data|json_script:"stock-status-data" }}
 {{ category_data|json_script:"category-data" }}
 {{ supplier_data|json_script:"supplier-data" }}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  window.categoryData = JSON.parse(document.getElementById("category-data").textContent);
-  window.supplierData = JSON.parse(document.getElementById("supplier-data").textContent);
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="{% static 'js/dashboard.js' %}"></script>
 <script src="{% static 'inventory/js/chatbot.js' %}"></script>
 {% endblock %}
@@ -27,46 +24,102 @@
   <!-- ===== Summary Cards ===== -->
   <div class="container-fluid mt-4">
     <div class="row g-3">
-      <div class="col-12 col-sm-6 col-lg-3">
+      <div class="col-12 col-sm-6 col-xl-3">
         <div class="summary-card">
           <div class="card-icon bg-primary"><i class="fa-solid fa-box"></i></div>
-          <div class="card-info"><h5>Προϊόντα</h5><p>{{ total_products }}</p></div>
+          <div class="card-info">
+            <h5>Προϊόντα</h5>
+            <p data-count="{{ total_products }}">{{ total_products }}</p>
+            <small>{{ total_categories }} κατηγ. · {{ total_suppliers }} προμηθ.</small>
+          </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-lg-3">
-        <div class="summary-card">
-          <div class="card-icon bg-success"><i class="fa-solid fa-layer-group"></i></div>
-          <div class="card-info"><h5>Κατηγορίες</h5><p>{{ total_categories }}</p></div>
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-lg-3">
-        <div class="summary-card">
-          <div class="card-icon bg-warning"><i class="fa-solid fa-truck"></i></div>
-          <div class="card-info"><h5>Προμηθευτές</h5><p>{{ total_suppliers }}</p></div>
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-lg-3">
+      <div class="col-12 col-sm-6 col-xl-3">
         <div class="summary-card">
           <div class="card-icon bg-info"><i class="fa-solid fa-euro-sign"></i></div>
-          <div class="card-info"><h5>Αξία Αποθέματος</h5><p>{{ total_stock_value }} €</p></div>
+          <div class="card-info">
+            <h5>Αξία Αποθέματος</h5>
+            <p data-count="{{ total_stock_value }}" data-suffix=" €">{{ total_stock_value }} €</p>
+            <small>τιμή × απόθεμα</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="summary-card">
+          <div class="card-icon bg-warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="card-info">
+            <h5>Περιορισμένο Απόθεμα</h5>
+            <p data-count="{{ low_stock_count }}">{{ low_stock_count }}</p>
+            <small>&lt; {{ low_stock_threshold }} τεμάχια</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="summary-card">
+          <div class="card-icon bg-danger"><i class="fa-solid fa-ban"></i></div>
+          <div class="card-info">
+            <h5>Εξαντλημένα</h5>
+            <p data-count="{{ out_of_stock_count }}">{{ out_of_stock_count }}</p>
+            <small>μηδενικό απόθεμα</small>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- ===== Charts Section ===== -->
-  <div class="container-fluid mt-5">
+  <div class="container-fluid mt-4">
     <div class="row g-4">
-      <div class="col-12 col-lg-6">
+      <div class="col-12 col-lg-4">
         <div class="chart-card">
-          <h5><i class="fa-solid fa-chart-pie me-2"></i> Κατανομή Προϊόντων ανά Κατηγορία</h5>
-          <canvas id="categoryChart"></canvas>
+          <h5><i class="fa-solid fa-chart-pie me-2"></i> Κατάσταση Αποθέματος</h5>
+          <div class="chart-container"><canvas id="stockStatusChart"></canvas></div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-8">
+        <div class="chart-card">
+          <h5><i class="fa-solid fa-chart-bar me-2"></i> Αξία Αποθέματος ανά Κατηγορία</h5>
+          <div class="chart-container"><canvas id="categoryChart"></canvas></div>
         </div>
       </div>
       <div class="col-12 col-lg-6">
         <div class="chart-card">
-          <h5><i class="fa-solid fa-chart-pie me-2"></i> Κατανομή Προϊόντων ανά Προμηθευτή</h5>
-          <canvas id="supplierChart"></canvas>
+          <h5><i class="fa-solid fa-chart-bar me-2"></i> Αξία Αποθέματος ανά Προμηθευτή</h5>
+          <div class="chart-container"><canvas id="supplierChart"></canvas></div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="chart-card">
+          <h5>
+            <i class="fa-solid fa-cart-arrow-down me-2"></i> Προϊόντα προς Αναπλήρωση
+            {% if reorder_total > reorder_products|length %}
+              <span class="reorder-more">{{ reorder_products|length }} από {{ reorder_total }}</span>
+            {% endif %}
+          </h5>
+          {% if reorder_products %}
+          <div class="table-responsive reorder-table">
+            <table class="table table-dark table-sm align-middle mb-0">
+              <thead>
+                <tr><th>Προϊόν</th><th>Προμηθευτής</th><th class="text-end">Απόθεμα</th><th></th></tr>
+              </thead>
+              <tbody>
+                {% for product in reorder_products %}
+                <tr>
+                  <td>
+                    <a href="{% url 'product_edit' product.barcode %}">{{ product.desc|default:product.barcode }}</a>
+                    <div class="text-secondary small">{{ product.barcode }}</div>
+                  </td>
+                  <td>{{ product.supplier.name|default:"—" }}</td>
+                  <td class="text-end">{{ product.stock|default_if_none:0 }}</td>
+                  <td><span class="badge stock-badge stock-{{ product.stock_status }}">{{ product.stock_status_label }}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="chart-empty">Όλα τα προϊόντα έχουν επαρκές απόθεμα.</p>
+          {% endif %}
         </div>
       </div>
     </div>
