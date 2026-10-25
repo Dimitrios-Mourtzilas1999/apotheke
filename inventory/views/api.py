@@ -1,9 +1,9 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
-from django.db.models import Q, Count, Sum
+from django.db.models import Count, F, Q, Sum
 from django.core.paginator import Paginator
 from django.conf import settings
-from ..models import LOW_STOCK_THRESHOLD, Category, Product, Supplier
+from ..models import LOW_STOCK, NEEDS_REORDER, OUT_OF_STOCK, Category, Product, Supplier
 
 
 @require_GET
@@ -34,9 +34,8 @@ def api_products(request):
         if supplier_id:
             products = products.filter(supplier_id=supplier_id)
 
-        # Filter low stock (less than 10)
         if low_stock:
-            products = products.filter(stock__lt=LOW_STOCK_THRESHOLD)
+            products = products.filter(NEEDS_REORDER)
 
         # Paginate
         paginator = Paginator(products, per_page)
@@ -310,12 +309,13 @@ def api_stock_summary(request):
         products = Product.objects.all()
 
         total_products = products.count()
-        low_stock = products.filter(stock__lt=LOW_STOCK_THRESHOLD).count()
-        out_of_stock = products.filter(stock=0).count()
+        low_stock = products.filter(LOW_STOCK).count()
+        out_of_stock = products.filter(OUT_OF_STOCK).count()
         total_stock = products.aggregate(Sum('stock'))['stock__sum'] or 0
 
-        # Get low stock products with pagination
-        low_stock_products = products.filter(stock__lt=LOW_STOCK_THRESHOLD).select_related('category', 'supplier')
+        # Low and out-of-stock products, emptiest first
+        low_stock_products = (products.filter(NEEDS_REORDER).select_related('category', 'supplier')
+                              .order_by(F('stock').asc(nulls_first=True), 'desc'))
         paginator = Paginator(low_stock_products, per_page)
         low_stock_page = paginator.get_page(page)
 

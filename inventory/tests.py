@@ -106,6 +106,21 @@ class AppTests(TestCase):
         self.assertEqual([p.barcode for p in r.context["reorder_products"]], ["none", "zero", "low"])
         self.assertContains(r, '/product/edit/low')
 
+    def test_stock_health_is_consistent_across_views(self):
+        Product.objects.create(barcode="neg", stock=-1)
+        Product.objects.create(barcode="zero", stock=0)
+        Product.objects.create(barcode="none", stock=None)
+        Product.objects.create(barcode="low", stock=3)
+        Product.objects.create(barcode="ok", stock=10)
+        self.assertEqual(Product.objects.get(barcode="neg").stock_status, "out_of_stock")
+        summary = self.c.get("/api/stock-summary").json()
+        self.assertEqual((summary["summary"]["low_stock"], summary["summary"]["out_of_stock"]), (1, 3))
+        self.assertEqual([p["barcode"] for p in summary["low_stock_products"]], ["none", "neg", "zero", "low"])
+        r = self.c.get("/dashboard")
+        self.assertEqual((r.context["low_stock_count"], r.context["out_of_stock_count"]), (1, 3))
+        statuses = {p.barcode: p.stock_status for p in Product.objects.all()}
+        self.assertEqual(sorted(b for b, s in statuses.items() if s == "out_of_stock"), ["neg", "none", "zero"])
+
     def test_dashboard_groups_tail_into_other(self):
         for i in range(10):
             sup = Supplier.objects.create(name=f"S{i}")
@@ -113,7 +128,7 @@ class AppTests(TestCase):
         data = self.c.get("/dashboard").context["supplier_data"]
         self.assertEqual(len(data["labels"]), 8)
         self.assertEqual(data["labels"][0], "S9")
-        self.assertEqual(data["labels"][-1], "Λοιπά")
+        self.assertEqual(data["labels"][-1], "Λοιποί προμηθευτές (σύνολο)")
         self.assertEqual(sum(data["values"]), sum(10 + i for i in range(10)))
         self.assertEqual(sum(data["counts"]), 10)
 
