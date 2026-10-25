@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "accounts",
     "inventory",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -166,6 +167,16 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # Anthropic API configuration
 ANTHROPIC_API_KEY = env.str("ANTHROPIC_API_KEY", default="")
+
+# Django REST Framework configuration
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+}
 
 # Required when running behind Appliku's reverse proxy
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

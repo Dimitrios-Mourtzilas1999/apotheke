@@ -12,3 +12,4 @@ django-allauth
 django-allauth[socialaccount]
 anthropic
 requests
+djangorestframework
