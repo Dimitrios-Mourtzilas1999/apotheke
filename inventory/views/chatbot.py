@@ -54,7 +54,7 @@ def chatbot_query(request):
                         },
                         "low_stock": {
                             "type": "boolean",
-                            "description": "Filter for products with low stock (< 10)"
+                            "description": "Filter for products that need reordering (low or out of stock, < 10)"
                         }
                     }
                 }

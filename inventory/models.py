@@ -1,6 +1,14 @@
 from django.db import models
 from django.utils import timezone
 
+LOW_STOCK_THRESHOLD = 10
+
+# Disjoint stock-health groups; keep in sync with Product.stock_status.
+OUT_OF_STOCK = models.Q(stock__isnull=True) | models.Q(stock__lte=0)
+LOW_STOCK = models.Q(stock__gt=0, stock__lt=LOW_STOCK_THRESHOLD)
+IN_STOCK = models.Q(stock__gte=LOW_STOCK_THRESHOLD)
+NEEDS_REORDER = OUT_OF_STOCK | LOW_STOCK
+
 
 class Category(models.Model):
     cat_type = models.CharField(max_length=100, null=True, blank=True)
@@ -65,18 +73,18 @@ class Product(models.Model):
 
     @property
     def stock_status(self):
-        if self.stock is None or self.stock == 0:
+        if self.stock is None or self.stock <= 0:
             return "out_of_stock"
-        elif self.stock < 10:
+        elif self.stock < LOW_STOCK_THRESHOLD:
             return "low_stock"
         else:
             return "in_stock"
 
     @property
     def stock_status_label(self):
-        if self.stock is None or self.stock == 0:
+        if self.stock is None or self.stock <= 0:
             return "Εξαντλημένο"
-        elif self.stock < 10:
+        elif self.stock < LOW_STOCK_THRESHOLD:
             return "Περιορισμένο"
         else:
             return "Διαθέσιμο"

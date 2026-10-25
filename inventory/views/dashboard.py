@@ -1,11 +1,20 @@
 import json
 
-from django.db.models import Count, ExpressionWrapper, F, IntegerField, Sum
+from django.db.models import Count, ExpressionWrapper, F, IntegerField, Sum, Value
+from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
-from ..models import Category, Product, Supplier
+from ..models import (IN_STOCK, LOW_STOCK, LOW_STOCK_THRESHOLD, NEEDS_REORDER, OUT_OF_STOCK,
+                      Category, Product, Supplier)
+
+TOP_GROUPS = 8
+REORDER_LIST_SIZE = 10
+
+STOCK_VALUE = ExpressionWrapper(
+    Coalesce(F("price"), Value(0)) * Coalesce(F("stock"), Value(0)), output_field=IntegerField()
+)
 
 
 @require_POST
@@ -30,17 +39,53 @@ def clear_filters(request):
     return JsonResponse({"status": "success"})
 
 
+def _stock_value_by(fk, label_field, empty_label, other_label):
+    """Stock value and product count per group, largest first; the tail is folded into `other_label`."""
+    rows = list(
+        Product.objects.values(fk, label_field)
+        .annotate(value=Coalesce(Sum(STOCK_VALUE), 0), count=Count("id"))
+        .order_by("-value", "-count")
+    )
+    if len(rows) > TOP_GROUPS:
+        head, tail = rows[:TOP_GROUPS - 1], rows[TOP_GROUPS - 1:]
+        rows = head + [{fk: None, label_field: other_label,
+                        "value": sum(r["value"] for r in tail), "count": sum(r["count"] for r in tail)}]
+    return {
+        "labels": [r[label_field] or (empty_label if r[fk] is None else f"#{r[fk]}") for r in rows],
+        "values": [r["value"] for r in rows],
+        "counts": [r["count"] for r in rows],
+    }
+
+
 def dashboard(request):
-    stock_value = Product.objects.aggregate(
-        v=Sum(ExpressionWrapper(F("price") * F("stock"), output_field=IntegerField()))
-    )["v"] or 0
-    categories = Category.objects.annotate(n=Count("products")).values_list("cat_type", "n")
-    suppliers = Supplier.objects.annotate(n=Count("products")).values_list("name", "n")
+    totals = Product.objects.aggregate(
+        products=Count("id"),
+        stock_value=Coalesce(Sum(STOCK_VALUE), 0),
+        in_stock=Count("id", filter=IN_STOCK),
+        low_stock=Count("id", filter=LOW_STOCK),
+        out_of_stock=Count("id", filter=OUT_OF_STOCK),
+    )
+    reorder_products = (
+        Product.objects.filter(NEEDS_REORDER)
+        .select_related("supplier")
+        .order_by(F("stock").asc(nulls_first=True), "desc")[:REORDER_LIST_SIZE]
+    )
     return render(request, "inventory/dashboard.html", {
-        "total_products": Product.objects.count(),
+        "total_products": totals["products"],
         "total_categories": Category.objects.count(),
         "total_suppliers": Supplier.objects.count(),
-        "total_stock_value": stock_value,
-        "category_data": {"labels": [c[0] for c in categories], "values": [c[1] for c in categories]},
-        "supplier_data": {"labels": [s[0] for s in suppliers], "values": [s[1] for s in suppliers]},
+        "total_stock_value": totals["stock_value"],
+        "low_stock_count": totals["low_stock"],
+        "out_of_stock_count": totals["out_of_stock"],
+        "low_stock_threshold": LOW_STOCK_THRESHOLD,
+        "reorder_products": reorder_products,
+        "reorder_total": totals["low_stock"] + totals["out_of_stock"],
+        "stock_status_data": {
+            "labels": ["Διαθέσιμο", "Περιορισμένο", "Εξαντλημένο"],
+            "values": [totals["in_stock"], totals["low_stock"], totals["out_of_stock"]],
+        },
+        "category_data": _stock_value_by("category", "category__cat_type", "Χωρίς κατηγορία",
+                                         "Λοιπές κατηγορίες (σύνολο)"),
+        "supplier_data": _stock_value_by("supplier", "supplier__name", "Χωρίς προμηθευτή",
+                                         "Λοιποί προμηθευτές (σύνολο)"),
     })

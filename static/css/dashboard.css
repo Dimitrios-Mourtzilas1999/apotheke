@@ -9,6 +9,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
   transition: all 0.25s ease;
+  height: 100%;
 }
 
 .summary-card:hover {
@@ -71,8 +72,66 @@
   align-items: center;
 }
 
-canvas {
-  max-height: 320px;
+.chart-card {
+  height: 100%;
 }
 
-/* Reuse your existing summary-card styles from before */
+.chart-container {
+  position: relative;
+  height: 300px;
+}
+
+.chart-empty {
+  color: #9aa0ad;
+  text-align: center;
+  padding: 3rem 0;
+  margin: 0;
+}
+
+.card-info small {
+  color: #9aa0ad;
+  font-size: 0.8rem;
+}
+
+/* ===== Reorder list ===== */
+.reorder-more {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #9aa0ad;
+}
+
+.reorder-table {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.reorder-table .table {
+  --bs-table-bg: transparent;
+}
+
+.reorder-table a {
+  color: #e6e9ef;
+  text-decoration: none;
+}
+
+.reorder-table a:hover {
+  text-decoration: underline;
+}
+
+.stock-badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.stock-low_stock {
+  background-color: rgba(234, 179, 8, 0.2);
+  color: #eab308;
+}
+
+.stock-out_of_stock {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}

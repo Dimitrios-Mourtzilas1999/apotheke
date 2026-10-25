@@ -11,6 +11,11 @@ class Migration(migrations.Migration):
         ('accounts', '0001_initial'),
     ]
 
+    # allauth's account.0006 queries User.email, so the column must exist first.
+    run_before = [
+        ('account', '0006_emailaddress_lower'),
+    ]
+
     operations = [
         migrations.AddField(
             model_name='user',
