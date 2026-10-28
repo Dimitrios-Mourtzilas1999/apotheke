@@ -47,6 +47,7 @@ class ListFilterForm(forms.Form):
             lo, hi = cleaned.get(low), cleaned.get(high)
             if lo is not None and hi is not None and lo > hi:
                 self.add_error(high, "Η μέγιστη τιμή πρέπει να είναι ≥ της ελάχιστης.")
+                cleaned.pop(low, None)
         return cleaned
 
     @property

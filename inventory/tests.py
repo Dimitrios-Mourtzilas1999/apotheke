@@ -156,7 +156,7 @@ class AppTests(TestCase):
 
         r = self.c.get(url, {"price_min": 9, "price_max": 1})
         self.assertIn("price_max", r.context["filter_form"].errors)
-        self.assertEqual([p.barcode for p in r.context["products"]], ["low"])  # only the valid bound applies
+        self.assertEqual(len(r.context["products"]), 4)  # an invalid range is dropped as a whole
         self.assertContains(r, "data-open-on-load")
 
     def test_filters_survive_pagination(self):
