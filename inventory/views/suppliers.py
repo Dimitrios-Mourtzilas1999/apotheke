@@ -12,9 +12,9 @@ from ..models import Product, Supplier
 from .categories import group_detail_context, group_list_context
 
 
-def supplier_list(request):
+def supplier_list(request, current_view="list"):
     return render(request, "inventory/suppliers/index.html", {
-        **group_list_context(request, SupplierFilterForm, Supplier.objects.all()),
+        **group_list_context(request, SupplierFilterForm, Supplier.objects.all(), current_view),
         "unassigned": Product.objects.filter(supplier__isnull=True).count(),
     })
 

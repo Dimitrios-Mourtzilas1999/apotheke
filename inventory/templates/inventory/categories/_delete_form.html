@@ -1,0 +1,9 @@
+{# Deleting is a state change: POST + CSRF #}
+<form method="post" action="{% url 'category_delete' %}" class="d-inline"
+      onsubmit="return confirm('Διαγραφή κατηγορίας;');">
+  {% csrf_token %}
+  <input type="hidden" name="cat_id" value="{{ cat.id }}">
+  <button type="submit" class="btn btn-outline-secondary btn-sm" title="Διαγραφή">
+    <i class="fa-solid fa-trash"></i>{% if label %} Διαγραφή{% endif %}
+  </button>
+</form>

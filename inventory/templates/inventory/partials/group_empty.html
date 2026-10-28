@@ -1,0 +1,8 @@
+<div class="empty-state">
+  {% if is_filtered %}
+  <h5>{{ no_match }}</h5>
+  {% else %}
+  <h5 class="text-muted">{{ none_text }}</h5>
+  <a href="{{ register_url }}" class="btn btn-primary btn-sm">{{ register_label }}</a>
+  {% endif %}
+</div>

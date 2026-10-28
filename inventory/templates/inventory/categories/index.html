@@ -1,78 +1,41 @@
-{% extends "base.html" %}{% load static %}
+{% extends "inventory/index.html" %}
+{% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'inventory/categories/css/categories_index.css' %}">
-<link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
+{% block entity_css %}
+  <link rel="stylesheet" href="{% static 'inventory/categories/css/categories_index.css' %}">
+  <link rel="stylesheet" href="{% static 'inventory/categories/css/category_list.css' %}">
+  <link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
 {% endblock %}
 
-{% block content %}
-{% include 'menu.html' %}
+{% block page_icon %}<i class="fa-solid fa-tags"></i>{% endblock %}
+{% block page_title %}Κατηγορίες{% endblock %}
 
-<div class="main-content">
-  <div class="content-wrapper">
-
-    {% if group_total %}
-    <!-- Page Header -->
-    <div class="page-header">
-      <h3 class="fw-bold"><i class="fa-solid fa-list"></i> Κατηγορίες</h3>
-      <div class="header-actions">
-        {% include 'inventory/partials/filter_button.html' %}
-        <a href="{% url 'category_register' %}" class="btn btn-primary btn-sm">
-          <i class="fa-solid fa-plus"></i> Νέα Κατηγορία
-        </a>
-      </div>
-    </div>
-
-    {% include 'inventory/partials/filter_toolbar.html' with modal_title='Φίλτρα κατηγοριών' %}
-
-    {% if uncategorized %}
-    <p class="group-hint">
-      <i class="fa-solid fa-circle-info"></i>
-      <a href="{% url 'product_list' 'list' %}?category=none">{{ uncategorized }} προϊόντα</a> δεν έχουν κατηγορία.
-    </p>
-    {% endif %}
-
-    <!-- Categories Grid -->
-    <div class="row g-3">
-      {% for cat in groups %}
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card category-card h-100 shadow-sm">
-          <div class="card-body text-center d-flex flex-column justify-content-between">
-            <div>
-              <i class="fa-solid fa-boxes-stacked category-icon mb-3"></i>
-              <h5 class="category-title mb-2">{{ cat.cat_type }}</h5>
-              {% url 'category_info' cat.id as detail_url %}
-              {% include 'inventory/partials/group_card_stats.html' with group=cat detail_url=detail_url %}
-            </div>
-            <div class="d-flex justify-content-center gap-2">
-              <a href="{% url 'category_info' cat.id %}" class="btn btn-outline-primary btn-sm">
-                <i class="fa-solid fa-eye"></i> Προβολή
-              </a>
-              {# Deleting is a state change: POST + CSRF (it was a GET link in Flask) #}
-              <form method="post" action="{% url 'category_delete' %}" class="d-inline"
-                    onsubmit="return confirm('Διαγραφή κατηγορίας;");">
-                {% csrf_token %}
-                <input type="hidden" name="cat_id" value="{{ cat.id }}">
-                <button type="submit" class="btn btn-outline-secondary btn-sm">
-                  <i class="fa-solid fa-trash"></i> Διαγραφή
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% empty %}
-      <div class="col-12"><div class="empty-state"><h5>Καμία κατηγορία δεν ταιριάζει με τα φίλτρα.</h5></div></div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">
-      <h5 class="text-muted">Δεν υπάρχουν διαθέσιμες κατηγορίες.</h5>
-      <a href="{% url 'category_register' %}" class="btn btn-primary btn-sm">Νέα Κατηγορία</a>
-    </div>
-    {% endif %}
-  </div>
-</div>
+{% block view_controls %}
+  <a href="{% url 'categories' 'list' %}{% if query_string %}?{{ query_string }}{% endif %}"
+     class="btn btn-sm {% if current_view == 'list' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+    <i class="fa-solid fa-list"></i> Λίστα
+  </a>
+  <a href="{% url 'categories' 'cards' %}{% if query_string %}?{{ query_string }}{% endif %}"
+     class="btn btn-sm {% if current_view == 'cards' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+    <i class="fa-solid fa-layer-group"></i> Κάρτες
+  </a>
+  <a href="{% url 'category_register' %}" class="btn btn-primary btn-sm">
+    <i class="fa-solid fa-plus"></i> Νέα Κατηγορία
+  </a>
+  {% include 'inventory/partials/filter_button.html' %}
 {% endblock %}
+
+{% block search_controls %}
+  {% include 'inventory/partials/filter_toolbar.html' with modal_title='Φίλτρα κατηγοριών' %}
+  {% if uncategorized %}
+  <p class="group-hint">
+    <i class="fa-solid fa-circle-info"></i>
+    <a href="{% url 'product_list' 'list' %}?category=none">{{ uncategorized }} προϊόντα</a> δεν έχουν κατηγορία.
+  </p>
+  {% endif %}
+{% endblock %}
+
+{% block mobile_content %}{% include 'inventory/categories/_cards.html' %}{% endblock %}
+{% block list_content %}{% include 'inventory/categories/_list.html' %}{% endblock %}
+{% block cards_content %}{% include 'inventory/categories/_cards.html' %}{% endblock %}
+{% block pagination %}{% include 'pagination.html' %}{% endblock %}

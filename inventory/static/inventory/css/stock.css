@@ -196,3 +196,25 @@
 .filter-tag:hover { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.5); color: #fca5a5; }
 .filter-clear { color: var(--stock-muted); font-size: 0.8rem; }
 .filter-clear:hover { color: #fff; }
+
+/* ===== In-page table search ===== */
+.table-search { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+.table-search .form-control {
+  max-width: 320px;
+  background: #1f2229;
+  color: #e6e9ef;
+  border-color: rgba(255,255,255,0.12);
+}
+.table-search .form-control::placeholder { color: #6b7280; }
+.categories-table .health-cell { min-width: 180px; }
+.categories-table .health-cell .reorder-pill { margin-top: 0.4rem; }
+.categories-table .category-link { color: #e6e9ef; font-weight: 600; text-decoration: none; }
+.categories-table .category-link:hover { color: #6ea8fe; }
+.categories-table > tbody > tr > td {
+  background-color: rgba(40,44,55,0.95);
+  color: #e6e9ef;
+  border-color: rgba(255,255,255,0.08);
+}
+.categories-table > tbody > tr:hover > td { background-color: rgba(60,64,75,0.95); }
+.categories-table td .btn { width: auto; min-width: 0; display: inline-block; }
+.table-search small { color: #9ca3af !important; }

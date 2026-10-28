@@ -1,74 +1,48 @@
-{% extends "base.html" %}{% load static %}
+{% extends "inventory/index.html" %}
+{% load static %}
 
-{% block css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'inventory/products/css/products.css' %}">
-<link rel="stylesheet" href="{% static 'inventory/products/css/product_list.css' %}">
-<link rel="stylesheet" href="{% static 'inventory/products/css/product_cards.css' %}">
-<link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
+{% block entity_css %}
+  <link rel="stylesheet" href="{% static 'inventory/products/css/products.css' %}">
+  <link rel="stylesheet" href="{% static 'inventory/products/css/product_list.css' %}">
+  <link rel="stylesheet" href="{% static 'inventory/products/css/product_cards.css' %}">
+  <link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
 {% endblock %}
 
-{% block js %}
-<script src="{% static 'inventory/products/js/products.js' %}"></script>
-<script src="{% static 'inventory/products/js/copy_barcode.js' %}"></script>
-{% if current_view == 'list' %}<script src="{% static 'inventory/products/js/table_sort.js' %}"></script>{% endif %}
+{% block entity_js %}
+  <script src="{% static 'inventory/products/js/products.js' %}" defer></script>
+  <script src="{% static 'inventory/products/js/copy_barcode.js' %}" defer></script>
+  {% if current_view == 'list' %}
+    <script src="{% static 'inventory/products/js/table_sort.js' %}" defer></script>
+  {% endif %}
 {% endblock %}
 
-{% block content %}
-{% include 'menu.html' %}
+{% block page_icon %}<i class="fa-solid fa-boxes-stacked"></i>{% endblock %}
+{% block page_title %}Προϊόντα{% endblock %}
 
-<div class="main-content">
-  <div class="content-wrapper">
-
-    <!-- Page Header -->
-    <div class="page-header">
-      <h3 class="fw-bold"><i class="fa-solid fa-list"></i> Προϊόντα</h3>
-    </div>
-
-    <!-- View toggle buttons -->
-    <div class="view-controls">
-      <a href="{% url 'product_list' 'list' %}{% if query_string %}?{{ query_string }}{% endif %}"
-         class="btn btn-sm {% if current_view == 'list' %}btn-primary{% else %}btn-outline-primary{% endif %}" id="btnProductList">
-        <i class="fa-solid fa-list"></i> Λίστα
-      </a>
-      <a href="{% url 'product_list' 'cards' %}{% if query_string %}?{{ query_string }}{% endif %}"
-         class="btn btn-sm {% if current_view == 'cards' %}btn-primary{% else %}btn-outline-primary{% endif %}" id="btnProductCard">
-        <i class="fa-solid fa-layer-group"></i> Κάρτες
-      </a>
-
-      <a href="{% url 'product_register' %}" class="btn btn-primary btn-sm">
-        <i class="fa-solid fa-plus"></i> Νέο Προϊόν
-      </a>
-
-      {% include 'inventory/partials/filter_button.html' %}
-
-      <button class="btn btn-sm btn-outline-danger" id="btnProductDelete">
-        <i class="fa-solid fa-trash"></i> Διαγραφή Επιλεγμένων
-      </button>
-    </div>
-
-    {% include 'inventory/partials/filter_toolbar.html' with modal_title='Φίλτρα προϊόντων' %}
-
-    {% include 'inventory/partials/stock_filters.html' %}
-
-    <!-- Dynamic content: plain fragments now (the Flask snippets extended other templates) -->
-    <div id="dynamicContent">
-      <!-- Mobile: Always show cards -->
-      <div class="d-md-none">
-        {% include 'inventory/products/_cards.html' %}
-      </div>
-      
-      <!-- Desktop: Show selected view -->
-      <div class="d-none d-md-block">
-        {% if current_view == 'list' %}
-          {% include 'inventory/products/_list.html' %}
-        {% else %}
-          {% include 'inventory/products/_cards.html' %}
-        {% endif %}
-      </div>
-    </div>
-
-  </div>
-</div>
+{% block view_controls %}
+  <a href="{% url 'product_list' 'list' %}{% if query_string %}?{{ query_string }}{% endif %}"
+     class="btn btn-sm {% if current_view == 'list' %}btn-primary{% else %}btn-outline-primary{% endif %}" id="btnProductList">
+    <i class="fa-solid fa-list"></i> Λίστα
+  </a>
+  <a href="{% url 'product_list' 'cards' %}{% if query_string %}?{{ query_string }}{% endif %}"
+     class="btn btn-sm {% if current_view == 'cards' %}btn-primary{% else %}btn-outline-primary{% endif %}" id="btnProductCard">
+    <i class="fa-solid fa-layer-group"></i> Κάρτες
+  </a>
+  <a href="{% url 'product_register' %}" class="btn btn-primary btn-sm">
+    <i class="fa-solid fa-plus"></i> Νέο Προϊόν
+  </a>
+  {% include 'inventory/partials/filter_button.html' %}
+  <button class="btn btn-sm btn-outline-danger" id="btnProductDelete">
+    <i class="fa-solid fa-trash"></i> Διαγραφή Επιλεγμένων
+  </button>
 {% endblock %}
+
+{% block search_controls %}
+  {% include 'inventory/partials/filter_toolbar.html' with modal_title='Φίλτρα προϊόντων' %}
+  {% include 'inventory/partials/stock_filters.html' %}
+{% endblock %}
+
+{% block mobile_content %}{% include 'inventory/products/_cards.html' %}{% endblock %}
+{% block list_content %}{% include 'inventory/products/_list.html' %}{% endblock %}
+{% block cards_content %}{% include 'inventory/products/_cards.html' %}{% endblock %}
+{% block pagination %}{% include 'pagination.html' %}{% endblock %}

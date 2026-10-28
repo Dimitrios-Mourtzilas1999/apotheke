@@ -9,19 +9,30 @@ from django.views.decorators.http import require_POST
 from ..filters import CategoryFilterForm
 from ..forms import CategoryForm
 from ..models import Category, Product, Supplier
-from ..stock import filter_by_status, status_chips, stock_totals, with_stock_stats
+from ..stock import filter_by_status, query_without_page, status_chips, stock_totals, with_stock_stats
+from ..utils import paginate
+
+GROUPS_PER_PAGE = 24
 
 
-def group_list_context(request, form_class, groups):
+def group_list_context(request, form_class, groups, current_view):
     filter_form = form_class(request.GET)
     active_filters = filter_form.active_filters(request)
+    items, page, pages, total = paginate(filter_form.apply(with_stock_stats(groups)),
+                                         request.GET.get("page", 1), GROUPS_PER_PAGE)
     return {
-        "groups": filter_form.apply(with_stock_stats(groups)),
+        "groups": items,
+        "page": page,
+        "pages": pages,
+        "page_numbers": range(1, pages + 1),
+        "total": total,
+        "row_offset": (page - 1) * GROUPS_PER_PAGE,
+        "current_view": "cards" if current_view == "cards" else "list",
+        "query_string": query_without_page(request),
         "filter_form": filter_form,
         "active_filters": active_filters,
         "filter_count": len(active_filters) + filter_form.sort_is_custom,
         "is_filtered": bool(active_filters),
-        "group_total": groups.count(),
     }
 
 
@@ -39,9 +50,9 @@ def group_detail_context(request, products):
     }
 
 
-def category_list(request):
+def categories(request, current_view="list"):
     return render(request, "inventory/categories/index.html", {
-        **group_list_context(request, CategoryFilterForm, Category.objects.all()),
+        **group_list_context(request, CategoryFilterForm, Category.objects.all(), current_view),
         "uncategorized": Product.objects.filter(category__isnull=True).count(),
     })
 
@@ -50,7 +61,7 @@ def category_info(request, cat_id):
     category = Category.objects.filter(pk=cat_id).first()
     if not category:
         messages.error(request, "Η κατηγορία δεν βρέθηκε")
-        return redirect("category_list")
+        return redirect("categories", "list")
     products = category.products.select_related("supplier").order_by("id")
     return render(request, "inventory/categories/info.html",
                   {"category": category, **group_detail_context(request, products)})
@@ -61,26 +72,26 @@ def category_delete(request):
     category = Category.objects.filter(pk=request.POST.get("cat_id") or None).first()
     if not category:
         messages.error(request, "Η κατηγορία δεν βρέθηκε")
-        return redirect("category_list")
+        return redirect("categories", "list")
     try:
         category.delete()  # products keep existing; their category is set to NULL
         messages.success(request, "Η κατηγορία διαγραφήκε")
     except DatabaseError as exc:
         messages.error(request, "Αποτυχία διαγραφής")
         print(f"[ERROR]: {exc}")
-    return redirect("category_list")
+    return redirect("categories", "list")
 
 
 def category_edit(request, id):
     category = Category.objects.filter(pk=id).first()
     if not category:
         messages.error(request, "Η κατηγορία δεν βρέθηκε")
-        return redirect("category_list")
+        return redirect("categories", "list")
     form = CategoryForm(request.POST or None, initial={"category_type": category.cat_type})
     if request.method == "POST" and form.is_valid():
         category.cat_type = form.cleaned_data["category_type"]
         category.save()
-        return redirect("category_list")
+        return redirect("categories", "list")
     return render(request, "inventory/categories/edit.html", {"category": category, "form": form})
 
 
@@ -89,7 +100,7 @@ def category_register(request):
     if request.method == "POST" and form.is_valid():
         Category.objects.create(cat_type=form.cleaned_data["category_type"])
         messages.success(request, "Η κατηγορία προστέθηκε")
-        return redirect("category_list")
+        return redirect("categories", "list")
     return render(request, "inventory/categories/register.html", {"form": form})
 
 

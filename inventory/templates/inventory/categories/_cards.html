@@ -1,0 +1,26 @@
+{% if groups %}
+<div class="row g-3">
+  {% for cat in groups %}
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+    <div class="card category-card h-100 shadow-sm">
+      <div class="card-body text-center d-flex flex-column justify-content-between">
+        <div>
+          <i class="fa-solid fa-boxes-stacked category-icon mb-3"></i>
+          <h5 class="category-title mb-2">{{ cat.cat_type }}</h5>
+          {% url 'category_info' cat.id as detail_url %}
+          {% include 'inventory/partials/group_card_stats.html' with group=cat detail_url=detail_url %}
+        </div>
+        <div class="d-flex justify-content-center gap-2">
+          <a href="{% url 'category_info' cat.id %}" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-eye"></i> Προβολή
+          </a>
+          {% include 'inventory/categories/_delete_form.html' with label=True %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+{% url 'category_register' as register_url %}{% include 'inventory/partials/group_empty.html' with no_match='Καμία κατηγορία δεν ταιριάζει με τα φίλτρα.' none_text='Δεν υπάρχουν διαθέσιμες κατηγορίες.' register_label='Νέα Κατηγορία' %}
+{% endif %}

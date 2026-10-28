@@ -50,7 +50,7 @@ class AppTests(TestCase):
 
     def test_anonymous_is_redirected_everywhere(self):
         anon = Client()
-        for name, args in [("dashboard", []), ("category_list", []), ("supplier_list", []),
+        for name, args in [("dashboard", []), ("categories", ["list"]), ("supplier_list", []),
                            ("product_list", ["list"]), ("reset_password", [])]:
             r = anon.get(reverse(name, args=args))
             self.assertEqual(r.status_code, 302, name)
@@ -168,18 +168,18 @@ class AppTests(TestCase):
 
     def test_category_list_stats_and_filters(self):
         self._stock_fixture()
-        r = self.c.get("/category/list")
+        r = self.c.get("/category/list/")
         stats = {c.cat_type: (c.product_count, c.stock_value, c.low_stock, c.out_of_stock, c.reorder)
                  for c in r.context["groups"]}
         self.assertEqual(stats, {"Alpha": (2, 130, 1, 0, 1), "Beta": (1, 0, 0, 1, 1), "Empty": (0, 0, 0, 0, 0)})
         self.assertEqual(r.context["uncategorized"], 1)
-        names = lambda params: [c.cat_type for c in self.c.get("/category/list", params).context["groups"]]
+        names = lambda params: [c.cat_type for c in self.c.get("/category/list/", params).context["groups"]]
         self.assertEqual(names({"health": "out"}), ["Beta"])
         self.assertEqual(names({"health": "empty"}), ["Empty"])
         self.assertEqual(names({"health": "reorder", "sort": "value", "order": "desc"}), ["Alpha", "Beta"])
         self.assertEqual(names({"q": "alp"}), ["Alpha"])
         self.assertEqual(names({"products_min": 1, "value_max": 50}), ["Beta"])
-        self.assertContains(self.c.get("/category/list", {"q": "zzz"}), "Καμία κατηγορία δεν ταιριάζει")
+        self.assertContains(self.c.get("/category/list/", {"q": "zzz"}), "Καμία κατηγορία δεν ταιριάζει")
 
     def test_supplier_list_stats_and_filters(self):
         self._stock_fixture()
@@ -224,10 +224,10 @@ class AppTests(TestCase):
     # ---------- categories ----------
     def test_category_crud(self):
         r = self.c.post("/category/register-category", {"category_type": "Φάρμακα"})
-        self.assertRedirects(r, "/category/list", fetch_redirect_response=False)
+        self.assertRedirects(r, "/category/list/", fetch_redirect_response=False)
         cat = Category.objects.get()
         Product.objects.create(barcode="p1", category=cat)
-        r = self.c.get("/category/list")
+        r = self.c.get("/category/list/")
         self.assertContains(r, "Φάρμακα")
         self.assertEqual(r.context["groups"][0].product_count, 1)
         self.assertContains(self.c.get(f"/category/info/{cat.id}"), "p1")
@@ -337,7 +337,7 @@ class AppTests(TestCase):
         self.assertEqual(self.c.get("/product/products/list?page=abc").status_code, 200)
 
     def test_empty_states_and_menu(self):
-        for url in ["/category/list", "/supplier/", "/product/products/list", "/product/products/cards"]:
+        for url in ["/category/list/", "/supplier/", "/product/products/list", "/product/products/cards"]:
             r = self.c.get(url)
             self.assertEqual(r.status_code, 200, url)
         self.assertContains(self.c.get("/product/products/list"), "Αποσύνδεση")
