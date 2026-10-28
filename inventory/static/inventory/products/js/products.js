@@ -4,23 +4,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!deleteBtn) return;
 
-    // Store checked values
-    let barcodes = [];
-
-    function toggleDeleteBtn() {
-        if (barcodes.length > 0) {
-            deleteBtn.classList.add('show');
-        } else {
-            deleteBtn.classList.remove('show');
-        }
+    // Only rows the user can see count, so hidden rows (in-page search, mobile/desktop duplicates) are never deleted
+    function visibleBoxes() {
+        return Array.from(document.querySelectorAll('.checkbox'))
+            .filter(cb => cb.id !== 'selectAll' && cb.offsetParent !== null);
     }
 
+    function selectedBarcodes() {
+        return [...new Set(visibleBoxes().filter(cb => cb.checked).map(cb => cb.value))];
+    }
+
+    function refresh() {
+        const boxes = visibleBoxes();
+        deleteBtn.classList.toggle('show', selectedBarcodes().length > 0);
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll) selectAll.checked = boxes.length > 0 && boxes.every(cb => cb.checked);
+    }
 
     deleteBtn.addEventListener('click', () => {
         fetch('/product/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ barcodes }),
+            body: JSON.stringify({ barcodes: selectedBarcodes() }),
         })
         .then(response => response.json())
         .then(data => {
@@ -36,39 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Single delegated listener
     container.addEventListener('change', (e) => {
         const target = e.target;
-
-        // Check if it's the "select all" checkbox
         if (target.id === 'selectAll') {
-            const checkboxes = document.querySelectorAll('.checkbox');
-            checkboxes.forEach(cb => {
-                cb.checked = target.checked;
-            });
-            barcodes = target.checked 
-                ? Array.from(document.querySelectorAll('.checkbox')).map(cb => cb.value)
-                : [];
-            toggleDeleteBtn();
-            return;
+            visibleBoxes().forEach(cb => { cb.checked = target.checked; });
         }
-
-        // Check if it's an individual checkbox
-        if (target.classList.contains('checkbox')) {
-            const value = target.value;
-            if (target.checked) {
-                if (!barcodes.includes(value)) barcodes.push(value);
-            } else {
-                barcodes = barcodes.filter(v => v !== value);
-            }
-
-            // Update selectAll checkbox state
-            const selectAll = document.getElementById('selectAll');
-            if (selectAll) {
-                selectAll.checked = Array.from(document.querySelectorAll('.checkbox')).every(cb => cb.checked);
-            }
-
-            toggleDeleteBtn();
-        }
+        if (target.classList.contains('checkbox')) refresh();
     });
+
+    document.addEventListener('table-search', refresh);
 });

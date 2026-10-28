@@ -23,9 +23,13 @@ document.querySelectorAll("[data-table-search]").forEach((container) => {
             const matches = !term || text.includes(term);
 
             row.hidden = !matches;
+            // A hidden row must not stay selected for bulk actions.
+            if (!matches) row.querySelectorAll('input[type=checkbox]').forEach((cb) => { cb.checked = false; });
 
             if (matches) visible++;
         });
+
+        document.dispatchEvent(new CustomEvent("table-search"));
 
         if (count) {
             count.textContent = `${visible} αποτελέσματα`;
