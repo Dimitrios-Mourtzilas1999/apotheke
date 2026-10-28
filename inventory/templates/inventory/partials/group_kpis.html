@@ -1,0 +1,6 @@
+<div class="group-kpis">
+  <div class="kpi"><span class="kpi-value">{{ totals.products }}</span><span class="kpi-label">Προϊόντα</span></div>
+  <div class="kpi"><span class="kpi-value">{{ totals.stock_value|floatformat:"0g" }} €</span><span class="kpi-label">Αξία αποθέματος</span></div>
+  <div class="kpi"><span class="kpi-value{% if totals.low_stock %} warn{% endif %}">{{ totals.low_stock }}</span><span class="kpi-label">Περιορισμένο</span></div>
+  <div class="kpi"><span class="kpi-value{% if totals.out_of_stock %} danger{% endif %}">{{ totals.out_of_stock }}</span><span class="kpi-label">Εξαντλημένα</span></div>
+</div>

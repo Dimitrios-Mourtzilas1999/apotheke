@@ -1,0 +1,49 @@
+{% if active_filters %}
+<div class="active-filters">
+  <span class="active-filters-label"><i class="fa-solid fa-filter"></i> Ενεργά φίλτρα:</span>
+  {% for tag in active_filters %}
+  <a href="{{ tag.remove_url }}" class="filter-tag" title="Αφαίρεση φίλτρου">
+    {{ tag.label }}: <strong>{{ tag.value }}</strong> <i class="fa-solid fa-xmark"></i>
+  </a>
+  {% endfor %}
+  <a href="{{ request.path }}" class="filter-clear">Καθαρισμός όλων</a>
+</div>
+{% endif %}
+
+<div class="modal fade filter-modal" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true"
+     {% if filter_form.errors %}data-open-on-load{% endif %}>
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <form method="get" action="{{ request.path }}" class="modal-content" novalidate>
+      <div class="modal-header">
+        <h5 class="modal-title" id="filterModalLabel"><i class="fa-solid fa-filter me-2"></i>{{ modal_title }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Κλείσιμο"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          {% for field in filter_form %}
+          <div class="col-12 col-sm-{{ field.field.col|default:6 }}">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}<div class="filter-error">{{ error }}</div>{% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="{{ request.path }}" class="btn btn-outline-secondary btn-sm">Καθαρισμός</a>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> Εφαρμογή</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("filterModal");
+    if (!modal || !window.bootstrap) return;
+    // Drop empty fields so the URL only carries the filters actually in use.
+    modal.querySelector("form").addEventListener("submit", (e) => {
+      e.target.querySelectorAll("input, select").forEach((el) => { if (!el.value) el.disabled = true; });
+    });
+    if (modal.hasAttribute("data-open-on-load")) bootstrap.Modal.getOrCreateInstance(modal).show();
+  });
+</script>

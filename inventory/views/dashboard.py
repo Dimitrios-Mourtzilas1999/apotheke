@@ -1,20 +1,16 @@
 import json
 
-from django.db.models import Count, ExpressionWrapper, F, IntegerField, Sum, Value
+from django.db.models import Count, F, Sum
 from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
-from ..models import (IN_STOCK, LOW_STOCK, LOW_STOCK_THRESHOLD, NEEDS_REORDER, OUT_OF_STOCK,
-                      Category, Product, Supplier)
+from ..models import LOW_STOCK_THRESHOLD, NEEDS_REORDER, Category, Product, Supplier
+from ..stock import STOCK_VALUE, stock_totals
 
 TOP_GROUPS = 8
 REORDER_LIST_SIZE = 10
-
-STOCK_VALUE = ExpressionWrapper(
-    Coalesce(F("price"), Value(0)) * Coalesce(F("stock"), Value(0)), output_field=IntegerField()
-)
 
 
 @require_POST
@@ -58,13 +54,7 @@ def _stock_value_by(fk, label_field, empty_label, other_label):
 
 
 def dashboard(request):
-    totals = Product.objects.aggregate(
-        products=Count("id"),
-        stock_value=Coalesce(Sum(STOCK_VALUE), 0),
-        in_stock=Count("id", filter=IN_STOCK),
-        low_stock=Count("id", filter=LOW_STOCK),
-        out_of_stock=Count("id", filter=OUT_OF_STOCK),
-    )
+    totals = stock_totals(Product.objects.all())
     reorder_products = (
         Product.objects.filter(NEEDS_REORDER)
         .select_related("supplier")
@@ -79,7 +69,7 @@ def dashboard(request):
         "out_of_stock_count": totals["out_of_stock"],
         "low_stock_threshold": LOW_STOCK_THRESHOLD,
         "reorder_products": reorder_products,
-        "reorder_total": totals["low_stock"] + totals["out_of_stock"],
+        "reorder_total": totals["reorder"],
         "stock_status_data": {
             "labels": ["Διαθέσιμο", "Περιορισμένο", "Εξαντλημένο"],
             "values": [totals["in_stock"], totals["low_stock"], totals["out_of_stock"]],

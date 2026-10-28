@@ -1,0 +1,2 @@
+<span class="badge stock-badge stock-{{ product.stock_status }}">{{ product.stock_status_label }}</span>
+<span class="stock-number{% if product.stock is None %} is-empty{% endif %}">{{ product.stock|default_if_none:'—' }}</span>

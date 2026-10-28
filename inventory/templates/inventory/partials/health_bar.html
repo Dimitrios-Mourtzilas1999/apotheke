@@ -1,0 +1,17 @@
+{% if group.product_count %}
+<div class="health-bar" role="img"
+     aria-label="Διαθέσιμα {{ group.in_stock }}, περιορισμένα {{ group.low_stock }}, εξαντλημένα {{ group.out_of_stock }}"
+     title="Διαθέσιμα {{ group.in_stock }} · Περιορισμένα {{ group.low_stock }} · Εξαντλημένα {{ group.out_of_stock }}">
+  {% if group.in_stock %}<span class="seg seg-in" style="flex-grow: {{ group.in_stock }}"></span>{% endif %}
+  {% if group.low_stock %}<span class="seg seg-low" style="flex-grow: {{ group.low_stock }}"></span>{% endif %}
+  {% if group.out_of_stock %}<span class="seg seg-out" style="flex-grow: {{ group.out_of_stock }}"></span>{% endif %}
+</div>
+<div class="health-legend">
+  <span><i class="dot dot-in"></i>{{ group.in_stock }}</span>
+  <span><i class="dot dot-low"></i>{{ group.low_stock }}</span>
+  <span><i class="dot dot-out"></i>{{ group.out_of_stock }}</span>
+</div>
+{% else %}
+<div class="health-bar empty"></div>
+<div class="health-legend"><span>Χωρίς προϊόντα</span></div>
+{% endif %}

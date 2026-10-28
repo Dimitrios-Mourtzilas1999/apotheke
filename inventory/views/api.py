@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Q, Count, Sum
-from ..models import Product, Category, Supplier
+from django.db.models import F, Q, Count, Sum
+from ..models import NEEDS_REORDER, OUT_OF_STOCK, LOW_STOCK, Product, Category, Supplier
 from ..serializers import (
     ProductSerializer, ProductDetailSerializer,
     CategorySerializer, CategoryProductSerializer,
@@ -43,9 +43,9 @@ def api_products(request):
     if supplier_id:
         products = products.filter(supplier_id=supplier_id)
 
-    # Filter low stock (less than 10)
+    # Products that need reordering (low or out of stock)
     if low_stock:
-        products = products.filter(stock__lt=10)
+        products = products.filter(NEEDS_REORDER)
 
     # Paginate
     paginator = StandardResultsSetPagination()
@@ -200,12 +200,13 @@ def api_stock_summary(request):
     products = Product.objects.all()
 
     total_products = products.count()
-    low_stock = products.filter(stock__lt=10).count()
-    out_of_stock = products.filter(stock=0).count()
+    low_stock = products.filter(LOW_STOCK).count()
+    out_of_stock = products.filter(OUT_OF_STOCK).count()
     total_stock = products.aggregate(Sum('stock'))['stock__sum'] or 0
 
     # Get low stock products with pagination
-    low_stock_products = products.filter(stock__lt=10).select_related('category', 'supplier')
+    low_stock_products = (products.filter(NEEDS_REORDER).select_related('category', 'supplier')
+                          .order_by(F('stock').asc(nulls_first=True), 'desc'))
 
     paginator = StandardResultsSetPagination()
     page = paginator.paginate_queryset(low_stock_products, request)

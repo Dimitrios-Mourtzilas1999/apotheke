@@ -4,19 +4,19 @@
 
         <!-- Previous -->
         <li class="page-item {% if page <= 1 %}disabled{% endif %}">
-            <a class="page-link" href="?page={{ page|add:'-1' }}">&laquo;</a>
+            <a class="page-link" href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ page|add:'-1' }}">&laquo;</a>
         </li>
 
         <!-- Page numbers -->
         {% for p in page_numbers %}
         <li class="page-item {% if p == page %}active{% endif %}">
-            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+            <a class="page-link" href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ p }}">{{ p }}</a>
         </li>
         {% endfor %}
 
         <!-- Next -->
         <li class="page-item {% if page >= pages %}disabled{% endif %}">
-            <a class="page-link" href="?page={{ page|add:'1' }}">&raquo;</a>
+            <a class="page-link" href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ page|add:'1' }}">&raquo;</a>
         </li>
 
     </ul>

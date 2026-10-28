@@ -1,0 +1,14 @@
+<div class="stock-overview">
+  <div class="stock-chips" role="group" aria-label="Φίλτρο αποθέματος">
+    {% for chip in status_chips %}
+    <a href="{{ chip.url }}" class="stock-chip chip-{{ chip.tone }}{% if chip.active %} active{% endif %}"{% if chip.active %} aria-current="true"{% endif %}>
+      {{ chip.label }} <span class="chip-count">{{ chip.count }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  <div class="stock-value-note">
+    <i class="fa-solid fa-euro-sign"></i>
+    Αξία αποθέματος{% if status %} (φίλτρο){% endif %}:
+    <strong>{{ filtered_value|floatformat:"0g" }} €</strong>
+  </div>
+</div>

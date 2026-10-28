@@ -63,7 +63,9 @@ def forgot_password(request):
                 request.session["reset_username"] = username
                 return redirect("verify_otp")
             except Exception as e:
-                messages.error(request, "Παρουσιάστηκε σφάλμα κατά την αποστολή του email. Παρακαλώ δοκιμάστε ξανά.")
+                messages.error(request, "Παρουσιάστηκε σφάλμα κατά την αποστολή του email. Παρακαλώ δοκιμάστε ξανά.",
+                               extra_tags="danger")
+                print(f"Error sending email: {e}")  # Log the error for debugging
     else:
         form = ForgotPasswordForm()
 

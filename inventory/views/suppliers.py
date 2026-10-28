@@ -2,24 +2,28 @@ import json
 
 from django.contrib import messages
 from django.db import DatabaseError
-from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
+from ..filters import SupplierFilterForm
 from ..forms import SupplierForm
-from ..models import Supplier
+from ..models import Product, Supplier
+from .categories import group_detail_context, group_list_context
 
 
-def supplier_list(request):
-    suppliers = Supplier.objects.annotate(product_count=Count("products")).order_by("name")
-    return render(request, "inventory/suppliers/index.html", {"suppliers": suppliers})
+def supplier_list(request, current_view="list"):
+    return render(request, "inventory/suppliers/index.html", {
+        **group_list_context(request, SupplierFilterForm, Supplier.objects.all(), current_view),
+        "unassigned": Product.objects.filter(supplier__isnull=True).count(),
+    })
 
 
 def supplier_products(request, supplier_id):
     supplier = get_object_or_404(Supplier, pk=supplier_id)
     products = supplier.products.select_related("category").order_by("id")
-    return render(request, "inventory/suppliers/products.html", {"supplier": supplier, "products": products})
+    return render(request, "inventory/suppliers/products.html",
+                  {"supplier": supplier, **group_detail_context(request, products)})
 
 
 def supplier_register(request):

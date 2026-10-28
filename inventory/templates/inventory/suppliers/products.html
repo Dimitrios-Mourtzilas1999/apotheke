@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 <link rel="stylesheet" href="{% static 'inventory/suppliers/css/supplier_products.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -13,22 +14,31 @@
   <div class="container-fluid">
 
     <!-- Page header -->
-    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-      <h3 class="fw-bold">
-        <i class="fa-solid fa-industry me-2"></i>
-        Προϊόντα Προμηθευτή: <span class="text-primary">{{ supplier.name }}</span>
-      </h3>
-      <a href="{% url 'supplier_list' %}" class="btn btn-secondary btn-sm">
-        <i class="fa-solid fa-arrow-left"></i> Επιστροφή
-      </a>
+    <div class="d-flex justify-content-between align-items-start mt-4 mb-3 gap-3 flex-wrap">
+      <div>
+        <h3 class="fw-bold">
+          <i class="fa-solid fa-industry me-2"></i>
+          Προϊόντα Προμηθευτή: <span class="text-primary">{{ supplier.name }}</span>
+        </h3>
+        {% include 'inventory/partials/group_kpis.html' %}
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'supplier_edit' supplier.id %}" class="btn btn-outline-primary btn-sm">
+          <i class="fa-solid fa-pen"></i> Επεξεργασία
+        </a>
+        <a href="{% url 'supplier_list' %}" class="btn btn-secondary btn-sm">
+          <i class="fa-solid fa-arrow-left"></i> Επιστροφή
+        </a>
+      </div>
     </div>
 
-    {% if products %}
-    <div class="table-responsive mt-4">
+    {% if total %}
+    {% include 'inventory/partials/stock_filters.html' %}
+    <div class="table-responsive">
       <table class="table table-hover table-bordered align-middle">
         <thead class="table-light">
           <tr>
-            <th>#</th><th>Κωδικός Προϊόντος</th><th>Περιγραφή</th><th>Κατηγορία</th><th>Απόθεμα</th><th>Τιμή</th>
+            <th>#</th><th>Κωδικός Προϊόντος</th><th>Περιγραφή</th><th>Κατηγορία</th><th>Απόθεμα</th><th>Τιμή</th><th>Αξία</th>
           </tr>
         </thead>
         <tbody>
@@ -40,11 +50,14 @@
                 {{ product.barcode }}
               </a>
             </td>
-            <td>{{ product.desc }}</td>
+            <td>{{ product.desc|default:'-' }}</td>
             <td>{{ product.category.cat_type|default:'Χωρίς κατηγορία' }}</td>
-            <td>{{ product.stock }}</td>
-            <td>{{ product.price|default:0|floatformat:"2u" }} €</td>
+            <td class="nowrap">{% include 'inventory/partials/stock_cell.html' %}</td>
+            <td class="nowrap">{{ product.price|default:0|floatformat:"2u" }} €</td>
+            <td class="nowrap">{{ product.stock_value|floatformat:"0u" }} €</td>
           </tr>
+          {% empty %}
+          <tr class="empty-row"><td colspan="7">Κανένα προϊόν δεν ταιριάζει με το φίλτρο.</td></tr>
           {% endfor %}
         </tbody>
       </table>

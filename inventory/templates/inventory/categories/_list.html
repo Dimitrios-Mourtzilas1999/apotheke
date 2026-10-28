@@ -1,0 +1,36 @@
+{% if groups %}
+<div class="table-search" data-table-search
+     data-search-input="#listSearch"
+     data-search-table="#listTable"
+     data-search-count="#listSearchCount"
+     data-search-columns='[1]'>
+  <input id="listSearch" type="search" class="form-control" placeholder="Αναζήτηση στη σελίδα...">
+  <small id="listSearchCount" class="text-muted"></small>
+</div>
+<table class="table table-hover align-middle categories-table" id="listTable">
+  <thead class="table-light">
+    <tr><th>#</th><th>Κατηγορία</th><th>Προϊόντα</th><th>Αξία</th><th>Κατάσταση αποθέματος</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for g in groups %}
+    {% url 'category_info' g.id as detail_url %}
+    <tr>
+    <td>{{ forloop.counter|add:row_offset }}</td>
+    <td><a href="{{ detail_url }}" class="category-link">{{ g.cat_type }}</a></td>
+    <td>{{ g.product_count }}</td>
+    <td class="text-nowrap">{{ g.stock_value|floatformat:"0g" }} €</td>
+    <td class="health-cell">
+      {% include 'inventory/partials/health_bar.html' with group=g %}
+      {% if g.reorder %}<a href="{{ detail_url }}?status=reorder" class="reorder-pill"><i class="fa-solid fa-triangle-exclamation"></i> {{ g.reorder }} προς παραγγελία</a>{% endif %}
+    </td>
+    <td class="text-end text-nowrap">
+      <a href="{% url 'category_edit' g.id %}" class="btn btn-outline-primary btn-sm" title="Επεξεργασία"><i class="fa-solid fa-pen"></i></a>
+      {% include 'inventory/categories/_delete_form.html' with cat=g %}
+    </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+{% url 'category_register' as register_url %}{% include 'inventory/partials/group_empty.html' with no_match='Καμία κατηγορία δεν ταιριάζει με τα φίλτρα.' none_text='Δεν υπάρχουν διαθέσιμες κατηγορίες.' register_label='Νέα Κατηγορία' %}
+{% endif %}
