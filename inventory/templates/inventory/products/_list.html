@@ -1,6 +1,6 @@
 {% if not products %}
   <div class="text-center mt-5">
-    <h5 class="text-muted">Δεν υπάρχουν προϊόντα.</h5>
+    <h5 class="text-muted">{% if is_filtered %}Δεν βρέθηκαν προϊόντα με αυτά τα φίλτρα.{% else %}Δεν υπάρχουν προϊόντα.{% endif %}</h5>
   </div>
 {% else %}
 <table class="table table-hover table-bordered align-middle products-table">
@@ -14,6 +14,7 @@
       <th scope="col" data-sort="supplier">Προμηθευτής <i class="fa-solid fa-sort"></i></th>
       <th scope="col" data-sort="stock">Απόθεμα <i class="fa-solid fa-sort"></i></th>
       <th scope="col" data-sort="price">Τιμή <i class="fa-solid fa-sort"></i></th>
+      <th scope="col" data-sort="value">Αξία <i class="fa-solid fa-sort"></i></th>
     </tr>
   </thead>
   <tbody id="productTableBody">
@@ -45,9 +46,10 @@
       <td data-label="Προμηθευτής">{{ product.supplier.name|default:'Χωρίς προμηθευτή' }}</td>
       <td data-label="Απόθεμα">
         <span class="badge stock-badge stock-{{ product.stock_status }}">{{ product.stock_status_label }}</span>
-        <span class="stock-number">{{ product.stock }}</span>
+        <span class="stock-number{% if product.stock is None %} is-empty{% endif %}">{{ product.stock|default_if_none:'—' }}</span>
       </td>
       <td data-label="Τιμή">{{ product.price|default:0|floatformat:"2u" }} €</td>
+      <td data-label="Αξία">{{ product.stock_value|floatformat:"0u" }} €</td>
     </tr>
     {% endfor %}
   </tbody>

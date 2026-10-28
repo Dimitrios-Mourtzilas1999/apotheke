@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{% static 'inventory/categories/css/category_info.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
 {% endblock %}
 
 {% block js %}
@@ -19,7 +20,7 @@
   <div class="category-header-card">
     <div class="category-info">
       <h2>{{ category.cat_type }}</h2>
-      <p>Συνολικά Προϊόν: <span class="highlight">{{ total }}</span></p>
+      {% include 'inventory/partials/group_kpis.html' %}
     </div>
     <div class="category-actions">
       <a href="{% url 'category_edit' category.id %}" class="btn btn-edit">
@@ -29,7 +30,8 @@
   </div>
 
   <!-- Product List Table -->
-  {% if products %}
+  {% if total %}
+    {% include 'inventory/partials/stock_filters.html' %}
     <div class="products-table-wrapper">
     <div class="table-actions mb-2">
       <button type="button" class="btn btn-delete" id="deleteSelectedBtn">
@@ -41,10 +43,12 @@
         <tr>
           <th><input type="checkbox" name="barcodes" class="checkbox" id="selectAll"></th>
           <th>#</th>
-          <th>Κωδικός Προϊοντος</th>
-          <th>Περιγραφή Προϊοντος</th>
+          <th>Κωδικός Προϊόντος</th>
+          <th>Περιγραφή Προϊόντος</th>
+          <th>Προμηθευτής</th>
           <th>Απόθεμα</th>
           <th>Τιμή</th>
+          <th>Αξία</th>
         </tr>
       </thead>
       <tbody>
@@ -53,16 +57,20 @@
           <td><input type="checkbox" name="barcodes" value="{{ product.barcode }}" class="checkbox"></td>
           <td>{{ forloop.counter }}</td>
           <td><a href="{% url 'product_edit' product.barcode %}">{{ product.barcode }}</a></td>
-          <td>{{ product.desc }}</td>
-          <td>{{ product.stock }}</td>
-          <td>{{ product.price }}</td>
+          <td>{{ product.desc|default:'-' }}</td>
+          <td>{% if product.supplier_id %}<a href="{% url 'supplier_products' product.supplier_id %}">{{ product.supplier.name }}</a>{% else %}<span class="text-dim">Χωρίς προμηθευτή</span>{% endif %}</td>
+          <td class="nowrap">{% include 'inventory/partials/stock_cell.html' %}</td>
+          <td class="nowrap">{{ product.price|default:0|floatformat:"2u" }} €</td>
+          <td class="nowrap">{{ product.stock_value|floatformat:"0u" }} €</td>
         </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="8">Κανένα προϊόν δεν ταιριάζει με το φίλτρο.</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
   {% else %}
-    <p class="no-products">Δεν υπαρχουν προιοντα στην κατηγορια.</p>
+    <p class="no-products">Δεν υπάρχουν προϊόντα στην κατηγορία.</p>
   {% endif %}
 
 </div>

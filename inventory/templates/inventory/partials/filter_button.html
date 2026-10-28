@@ -1,0 +1,4 @@
+<button type="button" class="btn btn-sm {% if filter_count %}btn-warning{% else %}btn-outline-light{% endif %} btn-filter"
+        data-bs-toggle="modal" data-bs-target="#filterModal">
+  <i class="fa-solid fa-filter"></i> Φίλτρα{% if filter_count %} <span class="badge text-bg-dark">{{ filter_count }}</span>{% endif %}
+</button>

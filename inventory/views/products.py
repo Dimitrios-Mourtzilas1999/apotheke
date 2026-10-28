@@ -7,19 +7,33 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
 from ..forms import ProductEditForm, ProductRegistrationForm
+from ..filters import ProductFilterForm
 from ..models import Product
+from ..stock import query_without_page, status_chips, stock_totals
 from ..utils import delete_product_image, make_qr_code, paginate, save_product_image
 
 
 def product_list(request, view):
     view = "list" if view == "list" else "cards"
     per_page = 10 if view == "list" else 6
-    queryset = Product.objects.select_related("category", "supplier").order_by("id")
+    filter_form = ProductFilterForm(request.GET)
+    base = Product.objects.select_related("category", "supplier")
+    chips = status_chips(request, stock_totals(filter_form.apply(base, include_status=False)),
+                         filter_form.values.get("status", ""))
+    queryset = filter_form.apply(base)
+    totals = stock_totals(queryset)
+
     items, page, pages, total = paginate(queryset, request.GET.get("page", 1), per_page)
+    active_filters = filter_form.active_filters(request)
     return render(request, "inventory/products/index.html", {
         "products": items, "page": page, "pages": pages, "page_numbers": range(1, pages + 1),
         "total": total, "per_page": per_page, "current_view": view,
         "row_offset": (page - 1) * per_page,
+        "status_chips": chips, "totals": totals, "filtered_value": totals["stock_value"],
+        "query_string": query_without_page(request), "status": filter_form.values.get("status", ""),
+        "filter_form": filter_form, "active_filters": active_filters,
+        "filter_count": len(active_filters) + filter_form.sort_is_custom,
+        "is_filtered": bool(active_filters),
     })
 
 

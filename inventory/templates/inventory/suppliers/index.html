@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 <link rel="stylesheet" href="{% static 'inventory/suppliers/css/suppliers_index.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -12,29 +13,37 @@
 <div class="main-content">
   <div class="content-wrapper">
 
-    {% if suppliers %}
+    {% if group_total %}
       <!-- Page Header -->
       <div class="page-header">
         <h3 class="fw-bold"><i class="fa-solid fa-truck"></i> Προμηθευτές</h3>
         <div class="header-actions">
+          {% include 'inventory/partials/filter_button.html' %}
           <a href="{% url 'supplier_register' %}" class="btn btn-primary btn-sm">
             <i class="fa-solid fa-plus"></i> Νέος Προμηθευτής
           </a>
         </div>
       </div>
 
+      {% include 'inventory/partials/filter_toolbar.html' with modal_title='Φίλτρα προμηθευτών' %}
+
+    {% if unassigned %}
+      <p class="group-hint">
+        <i class="fa-solid fa-circle-info"></i>
+        <a href="{% url 'product_list' 'list' %}?supplier=none">{{ unassigned }} προϊόντα</a> δεν έχουν προμηθευτή.
+      </p>
+      {% endif %}
+
       <div class="row g-3">
-        {% for sup in suppliers %}
+        {% for sup in groups %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
           <div class="card category-card h-100 shadow-sm">
             <div class="card-body text-center d-flex flex-column justify-content-between">
               <div>
                 <i class="fa-solid fa-truck category-icon mb-3"></i>
                 <h5 class="category-title mb-2">{{ sup.name }}</h5>
-                <p class="text-muted mb-3 product-count">
-                  <i class="fa-solid fa-cubes me-1"></i>
-                  <span class="fw-bold">{{ sup.product_count }}</span> προϊόντα
-                </p>
+                {% url 'supplier_products' sup.id as detail_url %}
+                {% include 'inventory/partials/group_card_stats.html' with group=sup detail_url=detail_url %}
               </div>
               <div class="d-flex justify-content-center gap-2">
                 <a href="{% url 'supplier_products' sup.id %}" class="btn btn-outline-primary btn-sm">
@@ -47,7 +56,9 @@
             </div>
           </div>
         </div>
-        {% endfor %}
+        {% empty %}
+      <div class="col-12"><div class="empty-state"><h5>Κανένας προμηθευτής δεν ταιριάζει με τα φίλτρα.</h5></div></div>
+      {% endfor %}
       </div>
     {% else %}
     <div class="empty-state">

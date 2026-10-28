@@ -113,13 +113,95 @@ class AppTests(TestCase):
         Product.objects.create(barcode="low", stock=3)
         Product.objects.create(barcode="ok", stock=10)
         self.assertEqual(Product.objects.get(barcode="neg").stock_status, "out_of_stock")
-        summary = self.c.get("/api/stock-summary").json()
+        summary = self.c.get("/api/stock-summary").json()["results"]
         self.assertEqual((summary["summary"]["low_stock"], summary["summary"]["out_of_stock"]), (1, 3))
         self.assertEqual([p["barcode"] for p in summary["low_stock_products"]], ["none", "neg", "zero", "low"])
         r = self.c.get("/dashboard")
         self.assertEqual((r.context["low_stock_count"], r.context["out_of_stock_count"]), (1, 3))
         statuses = {p.barcode: p.stock_status for p in Product.objects.all()}
         self.assertEqual(sorted(b for b, s in statuses.items() if s == "out_of_stock"), ["neg", "none", "zero"])
+
+    def _stock_fixture(self):
+        self.cat_a = Category.objects.create(cat_type="Alpha")
+        self.cat_b = Category.objects.create(cat_type="Beta")
+        Category.objects.create(cat_type="Empty")
+        self.sup_a = Supplier.objects.create(name="Acme", email="a@x.gr", phone="1")
+        self.sup_b = Supplier.objects.create(name="Bolt")
+        Product.objects.create(barcode="ok", desc="Aspirin", stock=20, price=5, category=self.cat_a, supplier=self.sup_a)
+        Product.objects.create(barcode="low", desc="Bandage", stock=3, price=10, category=self.cat_a, supplier=self.sup_b)
+        Product.objects.create(barcode="zero", desc="Cream", stock=0, price=7, category=self.cat_b, supplier=self.sup_b)
+        Product.objects.create(barcode="none", desc="Drops", stock=None, price=2, image="none.png")
+
+    def test_product_filters(self):
+        self._stock_fixture()
+        url = "/product/products/list"
+        barcodes = lambda r: [p.barcode for p in r.context["products"]]
+        self.assertEqual(barcodes(self.c.get(url, {"status": "reorder"})), ["low", "zero", "none"])
+        self.assertEqual(barcodes(self.c.get(url, {"status": "out"})), ["zero", "none"])
+        self.assertEqual(barcodes(self.c.get(url, {"q": "band"})), ["low"])
+        self.assertEqual(barcodes(self.c.get(url, {"category": "none"})), ["none"])
+        self.assertEqual(barcodes(self.c.get(url, {"supplier": self.sup_b.id})), ["low", "zero"])
+        self.assertEqual(barcodes(self.c.get(url, {"image": "yes"})), ["none"])
+        self.assertEqual(barcodes(self.c.get(url, {"price_min": 5, "price_max": 7})), ["ok", "zero"])
+        self.assertEqual(barcodes(self.c.get(url, {"stock_max": 3})), ["low", "zero"])
+        self.assertEqual(barcodes(self.c.get(url, {"sort": "value", "order": "desc"})), ["ok", "low", "zero", "none"])
+
+        r = self.c.get(url, {"supplier": self.sup_b.id, "status": "low"})
+        chips = {c["key"]: c["count"] for c in r.context["status_chips"]}
+        self.assertEqual((chips[""], chips["reorder"], chips["low"], chips["out"]), (2, 2, 1, 1))
+        self.assertEqual(r.context["filtered_value"], 30)
+        self.assertEqual(r.context["filter_count"], 2)
+        self.assertContains(r, 'id="filterModal"')
+        self.assertContains(r, "Προμηθευτής: <strong>Bolt</strong>", html=False)
+
+        r = self.c.get(url, {"price_min": 9, "price_max": 1})
+        self.assertIn("price_max", r.context["filter_form"].errors)
+        self.assertEqual([p.barcode for p in r.context["products"]], ["low"])  # only the valid bound applies
+        self.assertContains(r, "data-open-on-load")
+
+    def test_filters_survive_pagination(self):
+        for i in range(12):
+            Product.objects.create(barcode=f"p{i:02d}", stock=1, price=1)
+        r = self.c.get("/product/products/list", {"status": "low", "page": 1})
+        self.assertContains(r, 'href="?status=low&amp;page=2"')
+        self.assertContains(r, "/product/products/cards?status=low")
+
+    def test_category_list_stats_and_filters(self):
+        self._stock_fixture()
+        r = self.c.get("/category/list")
+        stats = {c.cat_type: (c.product_count, c.stock_value, c.low_stock, c.out_of_stock, c.reorder)
+                 for c in r.context["groups"]}
+        self.assertEqual(stats, {"Alpha": (2, 130, 1, 0, 1), "Beta": (1, 0, 0, 1, 1), "Empty": (0, 0, 0, 0, 0)})
+        self.assertEqual(r.context["uncategorized"], 1)
+        names = lambda params: [c.cat_type for c in self.c.get("/category/list", params).context["groups"]]
+        self.assertEqual(names({"health": "out"}), ["Beta"])
+        self.assertEqual(names({"health": "empty"}), ["Empty"])
+        self.assertEqual(names({"health": "reorder", "sort": "value", "order": "desc"}), ["Alpha", "Beta"])
+        self.assertEqual(names({"q": "alp"}), ["Alpha"])
+        self.assertEqual(names({"products_min": 1, "value_max": 50}), ["Beta"])
+        self.assertContains(self.c.get("/category/list", {"q": "zzz"}), "Καμία κατηγορία δεν ταιριάζει")
+
+    def test_supplier_list_stats_and_filters(self):
+        self._stock_fixture()
+        r = self.c.get("/supplier/")
+        stats = {s.name: (s.product_count, s.stock_value, s.reorder) for s in r.context["groups"]}
+        self.assertEqual(stats, {"Acme": (1, 100, 0), "Bolt": (2, 30, 2)})
+        self.assertEqual(r.context["unassigned"], 1)
+        names = lambda params: [s.name for s in self.c.get("/supplier/", params).context["groups"]]
+        self.assertEqual(names({"health": "healthy"}), ["Acme"])
+        self.assertEqual(names({"contact": "no_email"}), ["Bolt"])
+        self.assertEqual(names({"contact": "complete"}), ["Acme"])
+        self.assertEqual(names({"q": "a@x"}), ["Acme"])
+        self.assertEqual(names({"sort": "reorder", "order": "desc"}), ["Bolt", "Acme"])
+
+    def test_group_detail_pages_filter_by_status(self):
+        self._stock_fixture()
+        r = self.c.get(f"/category/info/{self.cat_a.id}", {"status": "reorder"})
+        self.assertEqual([p.barcode for p in r.context["products"]], ["low"])
+        self.assertEqual((r.context["totals"]["products"], r.context["filtered_value"]), (2, 30))
+        r = self.c.get(f"/supplier/{self.sup_b.id}/products", {"status": "out"})
+        self.assertEqual([p.barcode for p in r.context["products"]], ["zero"])
+        self.assertContains(r, "Εξαντλημένο")
 
     def test_dashboard_groups_tail_into_other(self):
         for i in range(10):
@@ -147,7 +229,7 @@ class AppTests(TestCase):
         Product.objects.create(barcode="p1", category=cat)
         r = self.c.get("/category/list")
         self.assertContains(r, "Φάρμακα")
-        self.assertEqual(r.context["categories"][0].product_count, 1)
+        self.assertEqual(r.context["groups"][0].product_count, 1)
         self.assertContains(self.c.get(f"/category/info/{cat.id}"), "p1")
         self.assertEqual(self.c.get("/category/info/999").status_code, 302)
         self.assertContains(self.c.get(f"/category/edit/{cat.id}"), "Φάρμακα")

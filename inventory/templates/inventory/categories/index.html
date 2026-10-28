@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 <link rel="stylesheet" href="{% static 'inventory/categories/css/categories_index.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -12,30 +13,38 @@
 <div class="main-content">
   <div class="content-wrapper">
 
-    {% if categories %}
+    {% if group_total %}
     <!-- Page Header -->
     <div class="page-header">
       <h3 class="fw-bold"><i class="fa-solid fa-list"></i> Κατηγορίες</h3>
       <div class="header-actions">
+        {% include 'inventory/partials/filter_button.html' %}
         <a href="{% url 'category_register' %}" class="btn btn-primary btn-sm">
           <i class="fa-solid fa-plus"></i> Νέα Κατηγορία
         </a>
       </div>
     </div>
 
+    {% include 'inventory/partials/filter_toolbar.html' with modal_title='Φίλτρα κατηγοριών' %}
+
+    {% if uncategorized %}
+    <p class="group-hint">
+      <i class="fa-solid fa-circle-info"></i>
+      <a href="{% url 'product_list' 'list' %}?category=none">{{ uncategorized }} προϊόντα</a> δεν έχουν κατηγορία.
+    </p>
+    {% endif %}
+
     <!-- Categories Grid -->
     <div class="row g-3">
-      {% for cat in categories %}
+      {% for cat in groups %}
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="card category-card h-100 shadow-sm">
           <div class="card-body text-center d-flex flex-column justify-content-between">
             <div>
               <i class="fa-solid fa-boxes-stacked category-icon mb-3"></i>
               <h5 class="category-title mb-2">{{ cat.cat_type }}</h5>
-              <p class="text-muted mb-3 product-count">
-                <i class="fa-solid fa-cubes me-1"></i>
-                <span class="fw-bold">{{ cat.product_count }}</span> προϊόντα
-              </p>
+              {% url 'category_info' cat.id as detail_url %}
+              {% include 'inventory/partials/group_card_stats.html' with group=cat detail_url=detail_url %}
             </div>
             <div class="d-flex justify-content-center gap-2">
               <a href="{% url 'category_info' cat.id %}" class="btn btn-outline-primary btn-sm">
@@ -54,6 +63,8 @@
           </div>
         </div>
       </div>
+      {% empty %}
+      <div class="col-12"><div class="empty-state"><h5>Καμία κατηγορία δεν ταιριάζει με τα φίλτρα.</h5></div></div>
       {% endfor %}
     </div>
     {% else %}

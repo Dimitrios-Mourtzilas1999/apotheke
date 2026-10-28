@@ -2,18 +2,48 @@ import json
 
 from django.contrib import messages
 from django.db import DatabaseError
-from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
+from ..filters import CategoryFilterForm
 from ..forms import CategoryForm
 from ..models import Category, Product, Supplier
+from ..stock import filter_by_status, status_chips, stock_totals, with_stock_stats
+
+
+def group_list_context(request, form_class, groups):
+    filter_form = form_class(request.GET)
+    active_filters = filter_form.active_filters(request)
+    return {
+        "groups": filter_form.apply(with_stock_stats(groups)),
+        "filter_form": filter_form,
+        "active_filters": active_filters,
+        "filter_count": len(active_filters) + filter_form.sort_is_custom,
+        "is_filtered": bool(active_filters),
+        "group_total": groups.count(),
+    }
+
+
+def group_detail_context(request, products):
+    status = request.GET.get("status", "")
+    totals = stock_totals(products)
+    filtered = filter_by_status(products, status)
+    return {
+        "products": filtered,
+        "filtered_value": stock_totals(filtered)["stock_value"] if status else totals["stock_value"],
+        "totals": totals,
+        "total": totals["products"],
+        "status_chips": status_chips(request, totals, status),
+        "status": status,
+    }
 
 
 def category_list(request):
-    categories = Category.objects.annotate(product_count=Count("products")).order_by("cat_type")
-    return render(request, "inventory/categories/index.html", {"categories": categories})
+    return render(request, "inventory/categories/index.html", {
+        **group_list_context(request, CategoryFilterForm, Category.objects.all()),
+        "uncategorized": Product.objects.filter(category__isnull=True).count(),
+    })
 
 
 def category_info(request, cat_id):
@@ -21,9 +51,9 @@ def category_info(request, cat_id):
     if not category:
         messages.error(request, "Η κατηγορία δεν βρέθηκε")
         return redirect("category_list")
-    products = category.products.all().order_by("id")
+    products = category.products.select_related("supplier").order_by("id")
     return render(request, "inventory/categories/info.html",
-                  {"category": category, "products": products, "total": products.count()})
+                  {"category": category, **group_detail_context(request, products)})
 
 
 @require_POST

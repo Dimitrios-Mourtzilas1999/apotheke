@@ -23,9 +23,13 @@
           <strong>Κατηγορία:</strong>
           {{ product.category.cat_type|default:'Χωρίς Κατηγορία' }}
         </p>
+        <p class="card-text mb-1">
+          <strong>Προμηθευτής:</strong>
+          {{ product.supplier.name|default:'Χωρίς προμηθευτή' }}
+        </p>
         <div class="mb-2">
           <span class="badge stock-badge stock-{{ product.stock_status }}">{{ product.stock_status_label }}</span>
-          <span class="stock-number">{{ product.stock }} τεμ.</span>
+          <span class="stock-number{% if product.stock is None %} is-empty{% endif %}">{% if product.stock is None %}—{% else %}{{ product.stock }} τεμ.{% endif %}</span>
         </div>
         <p class="card-text mb-2">
           <strong>Τιμή:</strong> {{ product.price|default:0|floatformat:"2u" }} €
@@ -51,6 +55,6 @@
 {% include 'pagination.html' %}
 {% else %}
 <div class="text-center mt-5">
-  <h5 class="text-muted">Δεν υπάρχουν προϊόντα.</h5>
+  <h5 class="text-muted">{% if is_filtered %}Δεν βρέθηκαν προϊόντα με αυτά τα φίλτρα.{% else %}Δεν υπάρχουν προϊόντα.{% endif %}</h5>
 </div>
 {% endif %}

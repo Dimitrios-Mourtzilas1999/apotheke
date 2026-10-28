@@ -72,6 +72,10 @@ class Product(models.Model):
         return None
 
     @property
+    def stock_value(self):
+        return (self.price or 0) * (self.stock or 0)
+
+    @property
     def stock_status(self):
         if self.stock is None or self.stock <= 0:
             return "out_of_stock"

@@ -1,0 +1,14 @@
+<div class="group-stats">
+  <div><span class="stat-value">{{ group.product_count }}</span><span class="stat-label">προϊόντα</span></div>
+  <div><span class="stat-value">{{ group.stock_value|floatformat:"0g" }} €</span><span class="stat-label">αξία</span></div>
+</div>
+{% include 'inventory/partials/health_bar.html' %}
+{% if group.reorder %}
+<a href="{{ detail_url }}?status=reorder" class="reorder-pill">
+  <i class="fa-solid fa-triangle-exclamation"></i> {{ group.reorder }} προς παραγγελία
+</a>
+{% elif group.product_count %}
+<span class="reorder-pill ok"><i class="fa-solid fa-check"></i> Επαρκές απόθεμα</span>
+{% else %}
+<span class="reorder-pill none">&nbsp;</span>
+{% endif %}

@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="{% static 'inventory/products/css/products.css' %}">
 <link rel="stylesheet" href="{% static 'inventory/products/css/product_list.css' %}">
 <link rel="stylesheet" href="{% static 'inventory/products/css/product_cards.css' %}">
+<link rel="stylesheet" href="{% static 'inventory/css/stock.css' %}">
 {% endblock %}
 
 {% block js %}
@@ -27,11 +28,11 @@
 
     <!-- View toggle buttons -->
     <div class="view-controls">
-      <a href="{% url 'product_list' 'list' %}"
+      <a href="{% url 'product_list' 'list' %}{% if query_string %}?{{ query_string }}{% endif %}"
          class="btn btn-sm {% if current_view == 'list' %}btn-primary{% else %}btn-outline-primary{% endif %}" id="btnProductList">
         <i class="fa-solid fa-list"></i> Λίστα
       </a>
-      <a href="{% url 'product_list' 'cards' %}"
+      <a href="{% url 'product_list' 'cards' %}{% if query_string %}?{{ query_string }}{% endif %}"
          class="btn btn-sm {% if current_view == 'cards' %}btn-primary{% else %}btn-outline-primary{% endif %}" id="btnProductCard">
         <i class="fa-solid fa-layer-group"></i> Κάρτες
       </a>
@@ -40,10 +41,16 @@
         <i class="fa-solid fa-plus"></i> Νέο Προϊόν
       </a>
 
+      {% include 'inventory/partials/filter_button.html' %}
+
       <button class="btn btn-sm btn-outline-danger" id="btnProductDelete">
         <i class="fa-solid fa-trash"></i> Διαγραφή Επιλεγμένων
       </button>
     </div>
+
+    {% include 'inventory/partials/filter_toolbar.html' with modal_title='Φίλτρα προϊόντων' %}
+
+    {% include 'inventory/partials/stock_filters.html' %}
 
     <!-- Dynamic content: plain fragments now (the Flask snippets extended other templates) -->
     <div id="dynamicContent">
